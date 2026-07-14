@@ -494,7 +494,7 @@ function padding(buf, buf_len_out, buf_len_out_bit, nbytes) {
 
   buf[cur_pos] = 0x80;
   cur_pos++;
-  buf.fill(0, cur_pos, zero_nbytes);
+  buf.fill(0, cur_pos, cur_pos + zero_nbytes);
   cur_pos += zero_nbytes;
 
   for (i = 0; i < 96 >> 3; ++i, ++cur_pos) {
@@ -898,8 +898,19 @@ function dstu7564_final(ctx, hash) {
     SET_ERROR(-1);
   }
 
+  var cur_pos = ctx.last_block_el % ctx.nbytes;
+  var zero_nbytes = mod(-ctx.msg_tot_len - 97, ctx.nbytes << 3) >>> 3;
+  var total_padded = ctx.last_block_el + 1 + zero_nbytes + 12;
+
   padding(ctx.last_block, ctx.last_block_el, ctx.msg_tot_len, ctx.nbytes);
   digest(ctx, ctx.last_block);
+
+  if (total_padded > ctx.nbytes) {
+    ctx.last_block.copy(ctx.last_block, 0, ctx.nbytes, total_padded);
+    ctx.last_block.fill(0, total_padded - ctx.nbytes, ctx.nbytes);
+    digest(ctx, ctx.last_block);
+  }
+
   output_transformation(ctx, hash);
 }
 
