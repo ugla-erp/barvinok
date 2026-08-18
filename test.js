@@ -115,6 +115,38 @@ function main8() {
   console.log("keyed kmac == one-shot OK?", ok);
 }
 
+function main9() {
+  // Two keyed-KMAC contexts, different keys, advanced in zip-lock (interleaved).
+  // They must not leak into each other. First message of each is a known vector.
+  let ok = true;
+  const keyA = Buffer.from("707172737475767778797a7b7c7d7e7f80818283", "hex");
+  const keyB = Buffer.alloc(32); Buffer.from("12345").copy(keyB);
+  const saltB = Buffer.from("7b435919fec0c63d1e03f7ac21c8d62a20287a0b0c2d64f2e1bd87b0b9c1b7f7", "hex");
+
+  const msgsA = [Buffer.from("Hello World"), Buffer.from("message A2"), Buffer.from("message A3")];
+  const msgsB = [Buffer.concat([saltB, Buffer.from([0,0,0,1])]), Buffer.from("message B2"), Buffer.from("message B3")];
+
+  const ctxA = dstu7564_kmac(keyA, 32);
+  const ctxB = dstu7564_kmac(keyB, 32);
+
+  const soloA = msgsA.map((m) => ctxA.compute(m));
+  const soloB = msgsB.map((m) => ctxB.compute(m));
+
+  if (soloA[0].toString("hex") !== "ac9b3027afaa041cb623b098d51200801432290afa30311d11b2450f3d95d98a") { console.log("VEC A FAIL"); ok = false; }
+  if (soloB[0].toString("hex") !== "eb18552bed47779661ac1b2a2e7d00e0975c123f2d5af3647a8311ee042ac810") { console.log("VEC B FAIL"); ok = false; }
+
+  const zipA = [], zipB = [];
+  for (let i = 0; i < msgsA.length; i++) {
+    zipA.push(ctxA.compute(msgsA[i]));
+    zipB.push(ctxB.compute(msgsB[i]));
+  }
+  for (let i = 0; i < msgsA.length; i++) {
+    if (!zipA[i].equals(soloA[i])) { console.log("ZIP A MISMATCH", i); ok = false; }
+    if (!zipB[i].equals(soloB[i])) { console.log("ZIP B MISMATCH", i); ok = false; }
+  }
+  console.log("zip-lock two keyed contexts OK?", ok);
+}
+
 main3();
 main2();
 main4();
@@ -122,3 +154,4 @@ main5();
 main6();
 main7();
 main8();
+main9();
