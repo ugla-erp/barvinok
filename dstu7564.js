@@ -922,8 +922,88 @@ function computeHash(size, buffer) {
   dstu7564_final(ctx, hash);
   return hash;
 }
+
+function padBlock(buf, blockSize) {
+  const msgLenBits = buf.length * 8;
+  const zeroNbytes = ((blockSize * 8) - ((msgLenBits + 97) % (blockSize * 8))) >>> 3;
+  const padded = Buffer.alloc(buf.length + 1 + zeroNbytes + 12);
+  buf.copy(padded);
+  let pos = buf.length;
+  padded[pos++] = 0x80;
+  pos += zeroNbytes;
+  for (let i = 0; i < 12; i++) {
+    padded[pos++] = i < 4 ? (msgLenBits >> (i * 8)) & 0xff : 0;
+  }
+  return padded;
+}
+
+function invertKey(key) {
+  const out = Buffer.from(key);
+  for (let i = 0; i < out.length; i++) out[i] = ~out[i] & 0xff;
+  return out;
+}
+
+/* KMAC (DSTU 7564:2014 §10): MAC(K, M) = Kupyna( PAD(K) || PAD(M) || ~K ). */
+function computeKmac(key, msg, macLen) {
+  if (macLen !== 32 && macLen !== 48 && macLen !== 64) {
+    throw new Error("Invalid MAC length " + macLen);
+  }
+  const blockSize = macLen <= 32 ? 64 : 128; // 32->512-bit state, 48/64->1024-bit state
+  const padK = padBlock(key, blockSize);
+  const padM = padBlock(msg, blockSize);
+  const invK = invertKey(key);
+
+  const ctx = dstu7564_alloc(0);
+  dstu7564_init(ctx, macLen);
+  dstu7564_update(ctx, padK, padK.length);
+  dstu7564_update(ctx, padM, padM.length);
+  dstu7564_update(ctx, invK, invK.length);
+  const hash = Buffer.alloc(macLen);
+  dstu7564_final(ctx, hash);
+  return hash;
+}
+
+
+/* Keyed KMAC context: digests PAD(K) once and reuses it across messages.
+ * Much faster than repeated computeKmac for PBKDF2-style loops. */
+function dstu7564_kmac(key, macLen) {
+  if (macLen !== 32 && macLen !== 48 && macLen !== 64) {
+    throw new Error("Invalid MAC length " + macLen);
+  }
+  const blockSize = macLen <= 32 ? 64 : 128;
+  const padK = padBlock(key, blockSize);
+  const invK = invertKey(key);
+
+  const ctx = dstu7564_alloc(0);
+  dstu7564_init(ctx, macLen);
+  dstu7564_update(ctx, padK, padK.length);
+  const keyedState = Buffer.from(ctx.state.subarray(0, blockSize));
+  const keyedMsgTotLen = ctx.msg_tot_len;
+  const keyedLastBlockEl = ctx.last_block_el;
+
+  function compute(msg) {
+    ctx.state.fill(0, 0, blockSize);
+    keyedState.copy(ctx.state, 0);
+    ctx.msg_tot_len = keyedMsgTotLen;
+    ctx.last_block_el = keyedLastBlockEl;
+    ctx.last_block.fill(0, 0, blockSize);
+    ctx.is_inited = true;
+
+    const padM = padBlock(msg, blockSize);
+    dstu7564_update(ctx, padM, padM.length);
+    dstu7564_update(ctx, invK, invK.length);
+    const hash = Buffer.alloc(macLen);
+    dstu7564_final(ctx, hash);
+    return hash;
+  }
+
+  return { compute };
+}
+
 module.exports = {
   computeHash,
+  computeKmac,
+  dstu7564_kmac,
   dstu7564_alloc,
   dstu7564_init,
   dstu7564_update,

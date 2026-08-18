@@ -1,4 +1,4 @@
-const { computeHash } = require("./dstu7564.js");
+const { computeHash, computeKmac, dstu7564_kmac } = require("./dstu7564.js");
 
 function main2() {
   const buffer = Buffer.from(
@@ -44,6 +44,81 @@ function main4() {
   console.log("OK?", hash.equals(expected));
 }
 
+function main5() {
+  const key = Buffer.from("707172737475767778797a7b7c7d7e7f80818283", "hex");
+  const msg = Buffer.from("Hello World", "ascii");
+  const mac = computeKmac(key, msg, 32);
+  const expected = Buffer.from("ac9b3027afaa041cb623b098d51200801432290afa30311d11b2450f3d95d98a", "hex");
+  console.log("kmac got", mac.toString("hex"));
+  console.log("kmac expected", expected.toString("hex"));
+  console.log("kmac OK?", mac.equals(expected));
+}
+
+function main6() {
+  // KMAC boundary/edge coverage: key and message at and around block size (64).
+  // No published vectors for these, so we assert determinism + no crash + sane length,
+  // and (key insight) that different key lengths produce different MACs.
+  let ok = true;
+  const keyLens = [0, 1, 32, 51, 52, 63, 64, 65, 128];
+  const msgLens = [0, 1, 32, 51, 52, 63, 64, 65, 128, 129];
+  const seen = new Set();
+  for (const kl of keyLens) {
+    for (const ml of msgLens) {
+      const key = Buffer.alloc(kl, 0x11);
+      const msg = Buffer.alloc(ml, 0x22);
+      const a = computeKmac(key, msg, 32);
+      const b = computeKmac(key, msg, 32);
+      if (a.length !== 32) { console.log("BAD LEN", kl, ml, a.length); ok = false; }
+      if (!a.equals(b)) { console.log("NONDETERMINISTIC", kl, ml); ok = false; }
+      seen.add(a.toString("hex"));
+    }
+  }
+  // all distinct key lengths must yield distinct MACs for a fixed message
+  if (seen.size !== keyLens.length * msgLens.length) {
+    console.log("COLLISION", seen.size, "vs", keyLens.length * msgLens.length);
+    ok = false;
+  }
+  console.log("kmac boundary/determinism OK?", ok);
+}
+
+function main7() {
+  // KMAC output-size coverage: 32/48/64, correct length + determinism.
+  let ok = true;
+  const key = Buffer.alloc(40, 0x33);
+  const msg = Buffer.alloc(100, 0x44);
+  for (const macLen of [32, 48, 64]) {
+    const a = computeKmac(key, msg, macLen);
+    const b = computeKmac(key, msg, macLen);
+    if (a.length !== macLen) { console.log("BAD LEN", macLen, a.length); ok = false; }
+    if (!a.equals(b)) { console.log("NONDETERMINISTIC", macLen); ok = false; }
+  }
+  console.log("kmac 32/48/64 length OK?", ok);
+}
+
+function main8() {
+  // Keyed KMAC (dstu7564_kmac) must match one-shot computeKmac for many shapes.
+  let ok = true;
+  const keyLens = [0, 1, 32, 51, 52, 63, 64, 65];
+  const msgLens = [0, 1, 32, 51, 52, 63, 64, 65, 128];
+  for (const macLen of [32, 48, 64]) {
+    for (const kl of keyLens) {
+      const key = Buffer.alloc(kl, 0x11);
+      const kmac = dstu7564_kmac(key, macLen);
+      for (const ml of msgLens) {
+        const msg = Buffer.alloc(ml, 0x22);
+        const a = kmac.compute(msg);
+        const b = computeKmac(key, msg, macLen);
+        if (!a.equals(b)) { console.log("MISMATCH", macLen, kl, ml); ok = false; }
+      }
+    }
+  }
+  console.log("keyed kmac == one-shot OK?", ok);
+}
+
 main3();
 main2();
 main4();
+main5();
+main6();
+main7();
+main8();
