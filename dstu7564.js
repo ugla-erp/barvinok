@@ -702,10 +702,21 @@ function kupyna_G_add(ctx, _in, out, i) {
   }
 }
 
+function readUint64(in8, out64, len) {
+  for (let w = 0; w < (len >>> 3); w++) {
+    let v = 0n;
+    for (let b = 0; b < 8; b++) {
+      v |= BigInt(in8[w * 8 + b]) << BigInt(b * 8);
+    }
+    out64[w] = v;
+  }
+  return out64;
+}
+
 function P(ctx, state_) {
   const block_len = ctx.columns << 3;
-  const state = uint8_to_uint64(state_.slice(0, block_len));
-  const s = new BigUint64Array(NB_1024);
+  const state = readUint64(state_, ctx.scratch_state, block_len);
+  const s = ctx.scratch_s;
 
   kupyna_G_xor(ctx, state, s, 0);
   kupyna_G_xor(ctx, s, state, 1);
@@ -728,12 +739,9 @@ function P(ctx, state_) {
 }
 
 function Q(ctx, state_) {
-  const s = new BigUint64Array(NB_1024);
-  let block_len;
-  let debug = Buffer.alloc(NB_1024 * ROWS);
-
-  block_len = ctx.columns << 3;
-  const state = uint8_to_uint64(state_);
+  const s = ctx.scratch_s;
+  const block_len = ctx.columns << 3;
+  const state = readUint64(state_, ctx.scratch_state, block_len);
 
   kupyna_G_add(ctx, state, s, 0);
 
@@ -765,8 +773,8 @@ function dstu7564_xor(arg1, arg2, out, columns) {
 }
 
 function digest(ctx, data) {
-  let temp1 = Buffer.alloc(NB_1024 * ROWS);
-  let temp2 = Buffer.alloc(NB_1024 * ROWS);
+  const temp1 = ctx.scratch_t1;
+  const temp2 = ctx.scratch_t2;
 
   data.copy(temp2, 0, 0, ctx.columns << 3);
   dstu7564_xor(ctx.state, data, temp1, ctx.columns);
@@ -778,7 +786,7 @@ function digest(ctx, data) {
 }
 
 function output_transformation(ctx, hash) {
-  let temp = Buffer.alloc(NB_1024 * ROWS);
+  const temp = ctx.scratch_t;
   let ret = 0;
 
   ctx.state.copy(temp, 0, 0, ROWS * NB_1024);
@@ -800,6 +808,11 @@ function dstu7564_alloc(sbox_id) {
     p_boxrowcol: makeList(ROWS, () => new BigUint64Array(MAX_NUM_IN_BYTE)),
     last_block: Buffer.alloc(STATE_BYTE_SIZE_1024 * 2),
     is_inited: false,
+    scratch_s: new BigUint64Array(NB_1024),
+    scratch_state: new BigUint64Array(NB_1024),
+    scratch_t1: Buffer.alloc(NB_1024 * ROWS),
+    scratch_t2: Buffer.alloc(NB_1024 * ROWS),
+    scratch_t: Buffer.alloc(NB_1024 * ROWS),
   };
 
   if (sbox_id === 0) {
