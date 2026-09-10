@@ -411,9 +411,6 @@ function init(sbox) {
   return new Gost(sbox);
 }
 
-// Callers reach these through the constructor itself (`gost89.init()`, `Gost.Subst`), which is how
-// every call site in the tree is written. Attaching them keeps that shape working alongside the
-// named exports rather than forcing an import rewrite at each site.
 Gost.Subst = Subst;
 Gost.init = init;
 

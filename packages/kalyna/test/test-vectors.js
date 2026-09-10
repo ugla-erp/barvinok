@@ -10,8 +10,6 @@ import {
 function hex(s) {
   return Buffer.from(s, "hex");
 }
-// The harness is vitest's; the vectors below are untouched. `check` REGISTERS a test rather than
-// printing a verdict, so a failing vector now fails the run instead of scrolling past.
 function check(name, got, exp) {
   it(name, () => {
     const expected = Buffer.isBuffer(exp) ? exp.toString("hex") : exp.toLowerCase();

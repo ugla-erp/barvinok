@@ -314,9 +314,6 @@ class Certificate {
   }
 
   verifySelfSigned({ time, usage }, hashes) {
-    // The parentheses are load-bearing. Without them the ternary swallows the whole conjunction and a
-    // named `usage` returns canUseFor() alone — no signature check, no validity dates. Spelled the way
-    // `verify()` above spells the identical expression.
     return (
       (usage ? this.canUseFor(usage) : true) &&
       this.verifyTime(time) &&

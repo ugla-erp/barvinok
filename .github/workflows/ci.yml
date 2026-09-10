@@ -20,9 +20,6 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        # 22 is the floor the packages declare in `engines`; 24 is current. Both are run because the
-        # thing most likely to break between them is module resolution, and that is precisely what
-        # this repository stopped bundling away.
         node: [22, 24]
 
     steps:
@@ -34,12 +31,8 @@ jobs:
           cache: npm
 
       - run: npm ci
-
-      # oxlint + eslint + prettier --check. Warnings are allowed through on purpose: the inherited
-      # tree carries ~90 of them as a burn-down list (see the long comment in eslint.config.js).
-      # Errors are not.
       - run: npm run check
-
       - run: npm test
+
       - name: Show publish contents
         run: npm pack --dry-run --workspaces

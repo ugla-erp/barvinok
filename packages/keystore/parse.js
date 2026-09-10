@@ -46,11 +46,6 @@ function readKey(_jks) {
 
 var MAGIC_JKS = 0xfeedfeed;
 function parse(jks) {
-  // `parse` answers null for anything that is not a JKS, and every caller branches on that. It has to
-  // hold for a TRUNCATED file too: without this guard an empty or short buffer reached `readUInt32BE`
-  // and threw `RangeError: Attempt to access memory outside buffer bounds`, so a caller handing over
-  // bytes from a user got a crash where the contract promised a refusal. Eight bytes is the smallest
-  // input that can carry the magic and the version, which are the only two fields checked below.
   if (!Buffer.isBuffer(jks) || jks.length < 8) {
     return null;
   }

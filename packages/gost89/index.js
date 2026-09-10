@@ -19,8 +19,6 @@ export {
   compat,
 };
 
-// The same object `require("gost89")` used to hand back, so `import gost89 from "barvinok-gost89"`
-// keeps working for callers that reach through it (`gost89.compat.algos()`).
 export default {
   init,
   PRNG,

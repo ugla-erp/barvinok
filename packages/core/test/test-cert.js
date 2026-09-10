@@ -253,18 +253,7 @@ describe("Certificate", () => {
       );
     });
 
-    // REGRESSION. `verifySelfSigned` read
-    //
-    //     usage ? this.canUseFor(usage) : true && verifyTime && verifySignature && pubkey
-    //
-    // so passing `usage` returned canUseFor() ALONE — a tampered or expired certificate verified as
-    // long as its key usage bits allowed the operation. The sibling `verify()` ten lines above spells
-    // the same expression with the parentheses the author meant:
-    //
-    //     (usage ? this.canUseFor(usage) : true) && verifyTime && ...
-    //
-    // Nothing caught it because every other test here calls the method WITHOUT `usage`, which takes the
-    // other branch. This one passes it.
+    // Regression: a named `usage` used to short-circuit the signature and validity checks.
     it("still checks the signature when a usage is named", () => {
       const temp = loadCert("CZOROOT.cer");
       temp.ob.tbsCertificate.issuer.value[0][0].value = Buffer.from("123");

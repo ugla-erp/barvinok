@@ -91,10 +91,6 @@ var gost_encrypt_cfb = function (cypher, key, iv) {
   return gost_crypt(0, cypher, key, iv);
 };
 
-// `encode_data` is deliberately not exported by name: it never was, and it is reachable only as
-// `algos().storesave`. Its signature disagrees with the `storesave(raw, params, password)` that
-// barvinok-algos declares, which is a real defect and a separate change — widening the export
-// surface here would only spread it.
 export {
   decode_data,
   convert_password,
