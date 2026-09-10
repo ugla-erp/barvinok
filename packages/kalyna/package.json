@@ -1,0 +1,13 @@
+{
+  "name": "dstu7624",
+  "version": "1.0.0",
+  "description": "Kalyna (DSTU 7624:2014) block cipher in pure JS, ported from cryptonite",
+  "main": "index.js",
+  "scripts": {
+    "test": "node test/test-vectors.js"
+  },
+  "keywords": ["kalyna", "dstu7624", "cipher", "ukraine", "cryptography"],
+  "author": "Ilya Petrov <ilya.muromec@gmail.com>",
+  "license": "BSD",
+  "dependencies": {}
+}
