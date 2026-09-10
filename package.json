@@ -1,0 +1,16 @@
+{
+  "name": "barvinok-monorepo",
+  "private": true,
+  "description": "Ukrainian national cryptography for JavaScript — ДСТУ 4145 / 7564 / 7624 and CMS/CAdES",
+  "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ugla-erp/barvinok.git"
+  },
+  "workspaces": [
+    "packages/*"
+  ],
+  "scripts": {
+    "test": "npm run test --workspaces --if-present"
+  }
+}

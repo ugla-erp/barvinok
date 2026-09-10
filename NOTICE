@@ -1,0 +1,70 @@
+barvinok
+Copyright 2026 UGLA
+
+This product includes software developed by the dstucrypt project
+(https://github.com/dstucrypt) and its contributors.
+
+================================================================================
+Third-party components
+================================================================================
+
+The packages listed below began as forks of existing, independently developed
+libraries. They arrived here with their full commit history — see `git log` on
+any file under the corresponding directory for the authorship of every line that
+predates this repository.
+
+Each was distributed by its author under a permissive licence (see the note on
+licence identification below). Those grants continue to apply to the code that
+came from them; the copyright notices in the affected files are retained, and
+this notice records their origin.
+
+--------------------------------------------------------------------------------
+packages/core            <- https://github.com/dstucrypt/jkurwa
+                            Copyright (c) Ilya Petrov and jkurwa contributors
+                            DSTU 4145 curves, ASN.1 models, CMS/CAdES containers,
+                            key containers, TSP/OCSP/CMP clients.
+
+packages/algos           <- https://github.com/dstucrypt/dstucrypt-algos
+                            Copyright (c) Ilya Petrov and contributors
+                            The algorithm wiring the container layer consumes.
+
+packages/gost89          <- https://github.com/dstucrypt/gost89
+                            Copyright (c) Ilya Petrov and contributors
+                            GOST 28147-89 cipher and GOST 34.311-95 hash.
+
+packages/kupyna          <- https://github.com/dstucrypt/dstu7564
+                            Copyright (c) Ilya Petrov and contributors
+                            ДСТУ 7564:2014 (Купина) hash function.
+
+packages/kalyna          <- https://github.com/dstucrypt/dstu7624
+                            Copyright (c) Ilya Petrov and contributors
+                            ДСТУ 7624:2014 (Калина) block cipher.
+
+packages/keystore        <- https://github.com/dstucrypt/jksreader
+                            Copyright (c) Ilya Petrov and contributors
+                            Java KeyStore reader.
+--------------------------------------------------------------------------------
+
+================================================================================
+A note on licence identification
+================================================================================
+
+At the time this repository was created, none of the upstream projects listed
+above shipped a LICENSE file. Each declared its licence only through the
+`license` field of its `package.json`:
+
+    dstu7564          BSD-2-Clause
+    jkurwa            BSD
+    dstucrypt-algos   BSD
+    gost89            BSD
+    dstu7624          BSD
+    jksreader         BSD
+
+"BSD" on its own is not an SPDX identifier and does not distinguish between the
+2-clause, 3-clause and 4-clause variants. We have therefore treated these
+components as permissively licensed in line with their authors' evident intent,
+retained their copyright notices, and recorded the ambiguity here rather than
+resolving it silently in either direction.
+
+If you are an author of any of the above and wish this notice corrected — or the
+licence stated precisely — please open an issue. We will amend it promptly.
