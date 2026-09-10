@@ -1,5 +1,5 @@
 import { describe, it } from "vitest";
-import gost89 from "gost89";
+import gost89 from "barvinok-gost89";
 import assert from "assert";
 import * as jk from "../lib/index.js";
 import { loadAsset, loadCert, assertEqualSaved } from "./utils.js";
@@ -19,29 +19,20 @@ describe("Certificate", () => {
 
       assert.equal(cert.valid.from, 1514314260000); // 2017-12-26 18:51:00
       assert.equal(cert.valid.to, 1672080660000); // 2022-12-26 18:51:00
-      assert.equal(
-        cert.serial,
-        57595595825646241314308569398321717626221363200
-      );
+      assert.equal(cert.serial, 57595595825646241314308569398321717626221363200);
       assert.equal(cert.signatureAlgorithm, "ECDSA-SHA256");
       assert.equal(cert.pubkeyAlgorithm, "ECDSA");
       assert.equal(cert.extension.ipn, null);
 
       assert.equal(cert.subject.commonName, "CA of the Justice of Ukraine");
       assert.equal(cert.subject.organizationName, 'State enterprise "NAIS"');
-      assert.equal(
-        cert.subject.organizationalUnitName,
-        "Certification Authority"
-      );
+      assert.equal(cert.subject.organizationalUnitName, "Certification Authority");
       assert.equal(cert.subject.countryName, "UA");
       assert.equal(cert.subject.localityName, "Kyiv");
       assert.equal(cert.subject.serialNumber, "UA-39787008-1217");
 
       assert.equal(cert.issuer.commonName, "Central certification authority");
-      assert.equal(
-        cert.issuer.organizationName,
-        "Ministry of Justice of Ukraine"
-      );
+      assert.equal(cert.issuer.organizationName, "Ministry of Justice of Ukraine");
       assert.equal(cert.issuer.organizationalUnitName, "Administrator ITS CCA");
       assert.equal(cert.issuer.countryName, "UA");
       assert.equal(cert.issuer.localityName, "Kyiv");
@@ -74,7 +65,7 @@ describe("Certificate", () => {
           "/serialNumber=UA-00015622-256" +
           "/countryName=UA" +
           "/localityName=Kyiv" +
-          "/organizationIdentifier=NTRUA-00015622"
+          "/organizationIdentifier=NTRUA-00015622",
       );
     });
   });

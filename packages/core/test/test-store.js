@@ -1,6 +1,6 @@
 import { describe, it } from "vitest";
 import assert from "assert";
-import { algos } from "gost89/lib/compat.js";
+import { algos } from "barvinok-gost89/lib/compat.js";
 
 import * as jk from "../lib/index.js";
 import * as pbes2 from "../lib/spec/pbes.js";
@@ -27,22 +27,19 @@ describe("Keycoder", () => {
 
     it("should serialize encrypted key to PEM", () => {
       const [store] = jk.guess_parse(enc);
-      assert.deepEqual(
-        pem.to_pem(pbes2.enc_serialize(store), "ENCRYPTED PRIVATE KEY"),
-        encPem
-      );
+      assert.deepEqual(pem.to_pem(pbes2.enc_serialize(store), "ENCRYPTED PRIVATE KEY"), encPem);
     });
 
     it("should decrypt raw key from PBES2", () => {
       const {
-        keys: [key]
+        keys: [key],
       } = jk.Priv.from_protected(enc, "password", algo);
       assert.deepEqual(key, priv);
     });
 
     it("should decrypt raw key from PBES2 (PEM)", () => {
       const {
-        keys: [key]
+        keys: [key],
       } = jk.Priv.from_protected(encPem, "password", algo);
       assert.deepEqual(key, priv);
     });
@@ -51,15 +48,9 @@ describe("Keycoder", () => {
       const iv = Buffer.from("4bb10f5c2945d49e", "hex");
       const salt = Buffer.from(
         "31a58dc1462981189cf6c701e276c7553a5ab5f6e36d8418e4aa40c930cf3876",
-        "hex"
+        "hex",
       );
-      const store = algo.storesave(
-        Buffer.from(priv.to_asn1()),
-        "PBES2",
-        "password",
-        iv,
-        salt
-      );
+      const store = algo.storesave(Buffer.from(priv.to_asn1()), "PBES2", "password", iv, salt);
 
       assertEqualSaved(pbes2.enc_serialize(store), "STORE_A040.dat");
     });

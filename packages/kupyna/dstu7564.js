@@ -44,379 +44,76 @@ function table_G(ctx, _in, v1, v2, v3, v4, v5, v6, v7, v8) {
 }
 
 function GALUA_MUL(i, j, k, shift) {
-  return (
-    multiply_galua(
-      mds_matrix[j * ROWS + k],
-      s_blocks[(k % 4) * MAX_NUM_IN_BYTE + i]
-    ) << shift
-  );
+  return multiply_galua(mds_matrix[j * ROWS + k], s_blocks[(k % 4) * MAX_NUM_IN_BYTE + i]) << shift;
 }
 
 /*Matrix for m_col operation*/
 // uint8
 const mds_matrix = [
-  0x01,
-  0x01,
-  0x05,
-  0x01,
-  0x08,
-  0x06,
-  0x07,
-  0x04,
-  0x04,
-  0x01,
-  0x01,
-  0x05,
-  0x01,
-  0x08,
-  0x06,
-  0x07,
-  0x07,
-  0x04,
-  0x01,
-  0x01,
-  0x05,
-  0x01,
-  0x08,
-  0x06,
-  0x06,
-  0x07,
-  0x04,
-  0x01,
-  0x01,
-  0x05,
-  0x01,
-  0x08,
-  0x08,
-  0x06,
-  0x07,
-  0x04,
-  0x01,
-  0x01,
-  0x05,
-  0x01,
-  0x01,
-  0x08,
-  0x06,
-  0x07,
-  0x04,
-  0x01,
-  0x01,
-  0x05,
-  0x05,
-  0x01,
-  0x08,
-  0x06,
-  0x07,
-  0x04,
-  0x01,
-  0x01,
-  0x01,
-  0x05,
-  0x01,
-  0x08,
-  0x06,
-  0x07,
-  0x04,
-  0x01,
+  0x01, 0x01, 0x05, 0x01, 0x08, 0x06, 0x07, 0x04, 0x04, 0x01, 0x01, 0x05, 0x01, 0x08, 0x06, 0x07,
+  0x07, 0x04, 0x01, 0x01, 0x05, 0x01, 0x08, 0x06, 0x06, 0x07, 0x04, 0x01, 0x01, 0x05, 0x01, 0x08,
+  0x08, 0x06, 0x07, 0x04, 0x01, 0x01, 0x05, 0x01, 0x01, 0x08, 0x06, 0x07, 0x04, 0x01, 0x01, 0x05,
+  0x05, 0x01, 0x08, 0x06, 0x07, 0x04, 0x01, 0x01, 0x01, 0x05, 0x01, 0x08, 0x06, 0x07, 0x04, 0x01,
 ];
 /*Константа для P раунда*/
 const p_pconst = [
-  [
-    0x00,
-    0x10,
-    0x20,
-    0x30,
-    0x40,
-    0x50,
-    0x60,
-    0x70,
-    0x80,
-    0x90,
-    0xa0,
-    0xb0,
-    0xc0,
-    0xd0,
-    0xe0,
-    0xf0,
-  ],
-  [
-    0x01,
-    0x11,
-    0x21,
-    0x31,
-    0x41,
-    0x51,
-    0x61,
-    0x71,
-    0x81,
-    0x91,
-    0xa1,
-    0xb1,
-    0xc1,
-    0xd1,
-    0xe1,
-    0xf1,
-  ],
-  [
-    0x02,
-    0x12,
-    0x22,
-    0x32,
-    0x42,
-    0x52,
-    0x62,
-    0x72,
-    0x82,
-    0x92,
-    0xa2,
-    0xb2,
-    0xc2,
-    0xd2,
-    0xe2,
-    0xf2,
-  ],
-  [
-    0x03,
-    0x13,
-    0x23,
-    0x33,
-    0x43,
-    0x53,
-    0x63,
-    0x73,
-    0x83,
-    0x93,
-    0xa3,
-    0xb3,
-    0xc3,
-    0xd3,
-    0xe3,
-    0xf3,
-  ],
-  [
-    0x04,
-    0x14,
-    0x24,
-    0x34,
-    0x44,
-    0x54,
-    0x64,
-    0x74,
-    0x84,
-    0x94,
-    0xa4,
-    0xb4,
-    0xc4,
-    0xd4,
-    0xe4,
-    0xf4,
-  ],
-  [
-    0x05,
-    0x15,
-    0x25,
-    0x35,
-    0x45,
-    0x55,
-    0x65,
-    0x75,
-    0x85,
-    0x95,
-    0xa5,
-    0xb5,
-    0xc5,
-    0xd5,
-    0xe5,
-    0xf5,
-  ],
-  [
-    0x06,
-    0x16,
-    0x26,
-    0x36,
-    0x46,
-    0x56,
-    0x66,
-    0x76,
-    0x86,
-    0x96,
-    0xa6,
-    0xb6,
-    0xc6,
-    0xd6,
-    0xe6,
-    0xf6,
-  ],
-  [
-    0x07,
-    0x17,
-    0x27,
-    0x37,
-    0x47,
-    0x57,
-    0x67,
-    0x77,
-    0x87,
-    0x97,
-    0xa7,
-    0xb7,
-    0xc7,
-    0xd7,
-    0xe7,
-    0xf7,
-  ],
-  [
-    0x08,
-    0x18,
-    0x28,
-    0x38,
-    0x48,
-    0x58,
-    0x68,
-    0x78,
-    0x88,
-    0x98,
-    0xa8,
-    0xb8,
-    0xc8,
-    0xd8,
-    0xe8,
-    0xf8,
-  ],
-  [
-    0x09,
-    0x19,
-    0x29,
-    0x39,
-    0x49,
-    0x59,
-    0x69,
-    0x79,
-    0x89,
-    0x99,
-    0xa9,
-    0xb9,
-    0xc9,
-    0xd9,
-    0xe9,
-    0xf9,
-  ],
-  [
-    0x0a,
-    0x1a,
-    0x2a,
-    0x3a,
-    0x4a,
-    0x5a,
-    0x6a,
-    0x7a,
-    0x8a,
-    0x9a,
-    0xaa,
-    0xba,
-    0xca,
-    0xda,
-    0xea,
-    0xfa,
-  ],
-  [
-    0x0b,
-    0x1b,
-    0x2b,
-    0x3b,
-    0x4b,
-    0x5b,
-    0x6b,
-    0x7b,
-    0x8b,
-    0x9b,
-    0xab,
-    0xbb,
-    0xcb,
-    0xdb,
-    0xeb,
-    0xfb,
-  ],
-  [
-    0x0c,
-    0x1c,
-    0x2c,
-    0x3c,
-    0x4c,
-    0x5c,
-    0x6c,
-    0x7c,
-    0x8c,
-    0x9c,
-    0xac,
-    0xbc,
-    0xcc,
-    0xdc,
-    0xec,
-    0xfc,
-  ],
-  [
-    0x0d,
-    0x1d,
-    0x2d,
-    0x3d,
-    0x4d,
-    0x5d,
-    0x6d,
-    0x7d,
-    0x8d,
-    0x9d,
-    0xad,
-    0xbd,
-    0xcd,
-    0xdd,
-    0xed,
-    0xfd,
-  ],
+  [0x00, 0x10, 0x20, 0x30, 0x40, 0x50, 0x60, 0x70, 0x80, 0x90, 0xa0, 0xb0, 0xc0, 0xd0, 0xe0, 0xf0],
+  [0x01, 0x11, 0x21, 0x31, 0x41, 0x51, 0x61, 0x71, 0x81, 0x91, 0xa1, 0xb1, 0xc1, 0xd1, 0xe1, 0xf1],
+  [0x02, 0x12, 0x22, 0x32, 0x42, 0x52, 0x62, 0x72, 0x82, 0x92, 0xa2, 0xb2, 0xc2, 0xd2, 0xe2, 0xf2],
+  [0x03, 0x13, 0x23, 0x33, 0x43, 0x53, 0x63, 0x73, 0x83, 0x93, 0xa3, 0xb3, 0xc3, 0xd3, 0xe3, 0xf3],
+  [0x04, 0x14, 0x24, 0x34, 0x44, 0x54, 0x64, 0x74, 0x84, 0x94, 0xa4, 0xb4, 0xc4, 0xd4, 0xe4, 0xf4],
+  [0x05, 0x15, 0x25, 0x35, 0x45, 0x55, 0x65, 0x75, 0x85, 0x95, 0xa5, 0xb5, 0xc5, 0xd5, 0xe5, 0xf5],
+  [0x06, 0x16, 0x26, 0x36, 0x46, 0x56, 0x66, 0x76, 0x86, 0x96, 0xa6, 0xb6, 0xc6, 0xd6, 0xe6, 0xf6],
+  [0x07, 0x17, 0x27, 0x37, 0x47, 0x57, 0x67, 0x77, 0x87, 0x97, 0xa7, 0xb7, 0xc7, 0xd7, 0xe7, 0xf7],
+  [0x08, 0x18, 0x28, 0x38, 0x48, 0x58, 0x68, 0x78, 0x88, 0x98, 0xa8, 0xb8, 0xc8, 0xd8, 0xe8, 0xf8],
+  [0x09, 0x19, 0x29, 0x39, 0x49, 0x59, 0x69, 0x79, 0x89, 0x99, 0xa9, 0xb9, 0xc9, 0xd9, 0xe9, 0xf9],
+  [0x0a, 0x1a, 0x2a, 0x3a, 0x4a, 0x5a, 0x6a, 0x7a, 0x8a, 0x9a, 0xaa, 0xba, 0xca, 0xda, 0xea, 0xfa],
+  [0x0b, 0x1b, 0x2b, 0x3b, 0x4b, 0x5b, 0x6b, 0x7b, 0x8b, 0x9b, 0xab, 0xbb, 0xcb, 0xdb, 0xeb, 0xfb],
+  [0x0c, 0x1c, 0x2c, 0x3c, 0x4c, 0x5c, 0x6c, 0x7c, 0x8c, 0x9c, 0xac, 0xbc, 0xcc, 0xdc, 0xec, 0xfc],
+  [0x0d, 0x1d, 0x2d, 0x3d, 0x4d, 0x5d, 0x6d, 0x7d, 0x8d, 0x9d, 0xad, 0xbd, 0xcd, 0xdd, 0xed, 0xfd],
 ];
 
 /*Константа для Q раунда длинной блока 64 байта*/
 const p_qconst_NB_512 = [
   Buffer.from(
     "F3F0F0F0F0F0F070F3F0F0F0F0F0F060F3F0F0F0F0F0F050F3F0F0F0F0F0F040F3F0F0F0F0F0F030F3F0F0F0F0F0F020F3F0F0F0F0F0F010F3F0F0F0F0F0F000",
-    "hex"
+    "hex",
   ),
   Buffer.from(
     "F3F0F0F0F0F0F071F3F0F0F0F0F0F061F3F0F0F0F0F0F051F3F0F0F0F0F0F041F3F0F0F0F0F0F031F3F0F0F0F0F0F021F3F0F0F0F0F0F011F3F0F0F0F0F0F001",
-    "hex"
+    "hex",
   ),
   Buffer.from(
     "F3F0F0F0F0F0F072F3F0F0F0F0F0F062F3F0F0F0F0F0F052F3F0F0F0F0F0F042F3F0F0F0F0F0F032F3F0F0F0F0F0F022F3F0F0F0F0F0F012F3F0F0F0F0F0F002",
-    "hex"
+    "hex",
   ),
   Buffer.from(
     "F3F0F0F0F0F0F073F3F0F0F0F0F0F063F3F0F0F0F0F0F053F3F0F0F0F0F0F043F3F0F0F0F0F0F033F3F0F0F0F0F0F023F3F0F0F0F0F0F013F3F0F0F0F0F0F003",
-    "hex"
+    "hex",
   ),
   Buffer.from(
     "F3F0F0F0F0F0F074F3F0F0F0F0F0F064F3F0F0F0F0F0F054F3F0F0F0F0F0F044F3F0F0F0F0F0F034F3F0F0F0F0F0F024F3F0F0F0F0F0F014F3F0F0F0F0F0F004",
-    "hex"
+    "hex",
   ),
   Buffer.from(
     "F3F0F0F0F0F0F075F3F0F0F0F0F0F065F3F0F0F0F0F0F055F3F0F0F0F0F0F045F3F0F0F0F0F0F035F3F0F0F0F0F0F025F3F0F0F0F0F0F015F3F0F0F0F0F0F005",
-    "hex"
+    "hex",
   ),
   Buffer.from(
     "F3F0F0F0F0F0F076F3F0F0F0F0F0F066F3F0F0F0F0F0F056F3F0F0F0F0F0F046F3F0F0F0F0F0F036F3F0F0F0F0F0F026F3F0F0F0F0F0F016F3F0F0F0F0F0F006",
-    "hex"
+    "hex",
   ),
   Buffer.from(
     "F3F0F0F0F0F0F077F3F0F0F0F0F0F067F3F0F0F0F0F0F057F3F0F0F0F0F0F047F3F0F0F0F0F0F037F3F0F0F0F0F0F027F3F0F0F0F0F0F017F3F0F0F0F0F0F007",
-    "hex"
+    "hex",
   ),
   Buffer.from(
     "F3F0F0F0F0F0F078F3F0F0F0F0F0F068F3F0F0F0F0F0F058F3F0F0F0F0F0F048F3F0F0F0F0F0F038F3F0F0F0F0F0F028F3F0F0F0F0F0F018F3F0F0F0F0F0F008",
-    "hex"
+    "hex",
   ),
   Buffer.from(
     "F3F0F0F0F0F0F079F3F0F0F0F0F0F069F3F0F0F0F0F0F059F3F0F0F0F0F0F049F3F0F0F0F0F0F039F3F0F0F0F0F0F029F3F0F0F0F0F0F019F3F0F0F0F0F0F009",
-    "hex"
+    "hex",
   ),
 ].map(uint8_to_uint64);
 
@@ -424,59 +121,59 @@ const p_qconst_NB_512 = [
 const p_qconst_NB_1024 = [
   Buffer.from(
     "F3F0F0F0F0F0F0F0F3F0F0F0F0F0F0E0F3F0F0F0F0F0F0D0F3F0F0F0F0F0F0C0F3F0F0F0F0F0F0B0F3F0F0F0F0F0F0A0F3F0F0F0F0F0F090F3F0F0F0F0F0F080F3F0F0F0F0F0F070F3F0F0F0F0F0F060F3F0F0F0F0F0F050F3F0F0F0F0F0F040F3F0F0F0F0F0F030F3F0F0F0F0F0F020F3F0F0F0F0F0F010F3F0F0F0F0F0F000",
-    "hex"
+    "hex",
   ),
   Buffer.from(
     "F3F0F0F0F0F0F0F1F3F0F0F0F0F0F0E1F3F0F0F0F0F0F0D1F3F0F0F0F0F0F0C1F3F0F0F0F0F0F0B1F3F0F0F0F0F0F0A1F3F0F0F0F0F0F091F3F0F0F0F0F0F081F3F0F0F0F0F0F071F3F0F0F0F0F0F061F3F0F0F0F0F0F051F3F0F0F0F0F0F041F3F0F0F0F0F0F031F3F0F0F0F0F0F021F3F0F0F0F0F0F011F3F0F0F0F0F0F001",
-    "hex"
+    "hex",
   ),
   Buffer.from(
     "F3F0F0F0F0F0F0F2F3F0F0F0F0F0F0E2F3F0F0F0F0F0F0D2F3F0F0F0F0F0F0C2F3F0F0F0F0F0F0B2F3F0F0F0F0F0F0A2F3F0F0F0F0F0F092F3F0F0F0F0F0F082F3F0F0F0F0F0F072F3F0F0F0F0F0F062F3F0F0F0F0F0F052F3F0F0F0F0F0F042F3F0F0F0F0F0F032F3F0F0F0F0F0F022F3F0F0F0F0F0F012F3F0F0F0F0F0F002",
-    "hex"
+    "hex",
   ),
   Buffer.from(
     "F3F0F0F0F0F0F0F3F3F0F0F0F0F0F0E3F3F0F0F0F0F0F0D3F3F0F0F0F0F0F0C3F3F0F0F0F0F0F0B3F3F0F0F0F0F0F0A3F3F0F0F0F0F0F093F3F0F0F0F0F0F083F3F0F0F0F0F0F073F3F0F0F0F0F0F063F3F0F0F0F0F0F053F3F0F0F0F0F0F043F3F0F0F0F0F0F033F3F0F0F0F0F0F023F3F0F0F0F0F0F013F3F0F0F0F0F0F003",
-    "hex"
+    "hex",
   ),
   Buffer.from(
     "F3F0F0F0F0F0F0F4F3F0F0F0F0F0F0E4F3F0F0F0F0F0F0D4F3F0F0F0F0F0F0C4F3F0F0F0F0F0F0B4F3F0F0F0F0F0F0A4F3F0F0F0F0F0F094F3F0F0F0F0F0F084F3F0F0F0F0F0F074F3F0F0F0F0F0F064F3F0F0F0F0F0F054F3F0F0F0F0F0F044F3F0F0F0F0F0F034F3F0F0F0F0F0F024F3F0F0F0F0F0F014F3F0F0F0F0F0F004",
-    "hex"
+    "hex",
   ),
   Buffer.from(
     "F3F0F0F0F0F0F0F5F3F0F0F0F0F0F0E5F3F0F0F0F0F0F0D5F3F0F0F0F0F0F0C5F3F0F0F0F0F0F0B5F3F0F0F0F0F0F0A5F3F0F0F0F0F0F095F3F0F0F0F0F0F085F3F0F0F0F0F0F075F3F0F0F0F0F0F065F3F0F0F0F0F0F055F3F0F0F0F0F0F045F3F0F0F0F0F0F035F3F0F0F0F0F0F025F3F0F0F0F0F0F015F3F0F0F0F0F0F005",
-    "hex"
+    "hex",
   ),
   Buffer.from(
     "F3F0F0F0F0F0F0F6F3F0F0F0F0F0F0E6F3F0F0F0F0F0F0D6F3F0F0F0F0F0F0C6F3F0F0F0F0F0F0B6F3F0F0F0F0F0F0A6F3F0F0F0F0F0F096F3F0F0F0F0F0F086F3F0F0F0F0F0F076F3F0F0F0F0F0F066F3F0F0F0F0F0F056F3F0F0F0F0F0F046F3F0F0F0F0F0F036F3F0F0F0F0F0F026F3F0F0F0F0F0F016F3F0F0F0F0F0F006",
-    "hex"
+    "hex",
   ),
   Buffer.from(
     "F3F0F0F0F0F0F0F7F3F0F0F0F0F0F0E7F3F0F0F0F0F0F0D7F3F0F0F0F0F0F0C7F3F0F0F0F0F0F0B7F3F0F0F0F0F0F0A7F3F0F0F0F0F0F097F3F0F0F0F0F0F087F3F0F0F0F0F0F077F3F0F0F0F0F0F067F3F0F0F0F0F0F057F3F0F0F0F0F0F047F3F0F0F0F0F0F037F3F0F0F0F0F0F027F3F0F0F0F0F0F017F3F0F0F0F0F0F007",
-    "hex"
+    "hex",
   ),
   Buffer.from(
     "F3F0F0F0F0F0F0F8F3F0F0F0F0F0F0E8F3F0F0F0F0F0F0D8F3F0F0F0F0F0F0C8F3F0F0F0F0F0F0B8F3F0F0F0F0F0F0A8F3F0F0F0F0F0F098F3F0F0F0F0F0F088F3F0F0F0F0F0F078F3F0F0F0F0F0F068F3F0F0F0F0F0F058F3F0F0F0F0F0F048F3F0F0F0F0F0F038F3F0F0F0F0F0F028F3F0F0F0F0F0F018F3F0F0F0F0F0F008",
-    "hex"
+    "hex",
   ),
   Buffer.from(
     "F3F0F0F0F0F0F0F9F3F0F0F0F0F0F0E9F3F0F0F0F0F0F0D9F3F0F0F0F0F0F0C9F3F0F0F0F0F0F0B9F3F0F0F0F0F0F0A9F3F0F0F0F0F0F099F3F0F0F0F0F0F089F3F0F0F0F0F0F079F3F0F0F0F0F0F069F3F0F0F0F0F0F059F3F0F0F0F0F0F049F3F0F0F0F0F0F039F3F0F0F0F0F0F029F3F0F0F0F0F0F019F3F0F0F0F0F0F009",
-    "hex"
+    "hex",
   ),
   Buffer.from(
     "F3F0F0F0F0F0F0FAF3F0F0F0F0F0F0EAF3F0F0F0F0F0F0DAF3F0F0F0F0F0F0CAF3F0F0F0F0F0F0BAF3F0F0F0F0F0F0AAF3F0F0F0F0F0F09AF3F0F0F0F0F0F08AF3F0F0F0F0F0F07AF3F0F0F0F0F0F06AF3F0F0F0F0F0F05AF3F0F0F0F0F0F04AF3F0F0F0F0F0F03AF3F0F0F0F0F0F02AF3F0F0F0F0F0F01AF3F0F0F0F0F0F00A",
-    "hex"
+    "hex",
   ),
   Buffer.from(
     "F3F0F0F0F0F0F0FBF3F0F0F0F0F0F0EBF3F0F0F0F0F0F0DBF3F0F0F0F0F0F0CBF3F0F0F0F0F0F0BBF3F0F0F0F0F0F0ABF3F0F0F0F0F0F09BF3F0F0F0F0F0F08BF3F0F0F0F0F0F07BF3F0F0F0F0F0F06BF3F0F0F0F0F0F05BF3F0F0F0F0F0F04BF3F0F0F0F0F0F03BF3F0F0F0F0F0F02BF3F0F0F0F0F0F01BF3F0F0F0F0F0F00B",
-    "hex"
+    "hex",
   ),
   Buffer.from(
     "F3F0F0F0F0F0F0FCF3F0F0F0F0F0F0ECF3F0F0F0F0F0F0DCF3F0F0F0F0F0F0CCF3F0F0F0F0F0F0BCF3F0F0F0F0F0F0ACF3F0F0F0F0F0F09CF3F0F0F0F0F0F08CF3F0F0F0F0F0F07CF3F0F0F0F0F0F06CF3F0F0F0F0F0F05CF3F0F0F0F0F0F04CF3F0F0F0F0F0F03CF3F0F0F0F0F0F02CF3F0F0F0F0F0F01CF3F0F0F0F0F0F00C",
-    "hex"
+    "hex",
   ),
   Buffer.from(
     "F3F0F0F0F0F0F0FDF3F0F0F0F0F0F0EDF3F0F0F0F0F0F0DDF3F0F0F0F0F0F0CDF3F0F0F0F0F0F0BDF3F0F0F0F0F0F0ADF3F0F0F0F0F0F09DF3F0F0F0F0F0F08DF3F0F0F0F0F0F07DF3F0F0F0F0F0F06DF3F0F0F0F0F0F05DF3F0F0F0F0F0F04DF3F0F0F0F0F0F03DF3F0F0F0F0F0F02DF3F0F0F0F0F0F01DF3F0F0F0F0F0F00D",
-    "hex"
+    "hex",
   ),
 ].map(uint8_to_uint64);
 
@@ -703,7 +400,7 @@ function kupyna_G_add(ctx, _in, out, i) {
 }
 
 function readUint64(in8, out64, len) {
-  for (let w = 0; w < (len >>> 3); w++) {
+  for (let w = 0; w < len >>> 3; w++) {
     let v = 0n;
     for (let b = 0; b < 8; b++) {
       v |= BigInt(in8[w * 8 + b]) << BigInt(b * 8);
@@ -765,8 +462,7 @@ function Q(ctx, state_) {
 }
 
 function dstu7564_xor(arg1, arg2, out, columns) {
-  const limit =
-    columns === NB_1024 ? STATE_BYTE_SIZE_1024 : STATE_BYTE_SIZE_512;
+  const limit = columns === NB_1024 ? STATE_BYTE_SIZE_1024 : STATE_BYTE_SIZE_512;
   for (let idx = 0; idx < limit; idx++) {
     out[idx] = arg1[idx] ^ arg2[idx];
   }
@@ -882,12 +578,7 @@ function dstu7564_update(ctx, data_buf, data_buf_len) {
     return true;
   }
 
-  data_buf.copy(
-    ctx.last_block,
-    ctx.last_block_el,
-    0,
-    block_size - ctx.last_block_el
-  );
+  data_buf.copy(ctx.last_block, ctx.last_block_el, 0, block_size - ctx.last_block_el);
   digest(ctx, ctx.last_block);
   ctx.last_block.fill(0, 0, MAX_BLOCK_LEN);
 
@@ -938,7 +629,7 @@ function computeHash(size, buffer) {
 
 function padBlock(buf, blockSize) {
   const msgLenBits = buf.length * 8;
-  const zeroNbytes = ((blockSize * 8) - ((msgLenBits + 97) % (blockSize * 8))) >>> 3;
+  const zeroNbytes = (blockSize * 8 - ((msgLenBits + 97) % (blockSize * 8))) >>> 3;
   const padded = Buffer.alloc(buf.length + 1 + zeroNbytes + 12);
   buf.copy(padded);
   let pos = buf.length;
@@ -975,7 +666,6 @@ function computeKmac(key, msg, macLen) {
   dstu7564_final(ctx, hash);
   return hash;
 }
-
 
 /* Keyed KMAC context: digests PAD(K) once and reuses it across messages.
  * Much faster than repeated computeKmac for PBKDF2-style loops. */

@@ -7,10 +7,36 @@
     "type": "git",
     "url": "git+https://github.com/ugla-erp/barvinok.git"
   },
+  "engines": {
+    "node": ">=22"
+  },
+  "packageManager": "npm@11.9.0",
   "workspaces": [
     "packages/*"
   ],
   "scripts": {
-    "test": "npm run test --workspaces --if-present"
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "cover": "vitest run --coverage",
+    "lint:oxlint": "oxlint . --fix -D correctness --ignore-path .gitignore",
+    "lint:eslint": "eslint . --fix",
+    "lint": "npm run lint:oxlint && npm run lint:eslint",
+    "check:oxlint": "oxlint . -D correctness --ignore-path .gitignore",
+    "check:eslint": "eslint .",
+    "check:format": "prettier --check .",
+    "check": "npm run check:oxlint && npm run check:eslint && npm run check:format",
+    "format": "prettier --write .",
+    "build": "npm run build --workspaces --if-present"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "@vitest/coverage-v8": "^4.1.10",
+    "eslint": "^10.0.0",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-oxlint": "^1.48.0",
+    "globals": "^17.3.0",
+    "oxlint": "^1.48.0",
+    "prettier": "^3.8.1",
+    "vitest": "^4.1.10"
   }
 }

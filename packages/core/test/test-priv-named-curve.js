@@ -11,7 +11,7 @@ import * as jk from "../lib/index.js";
  * explicit parameters — which is why the broken branch in
  * Priv.from_asn1 (`jk.std_curve` with no `jk` in scope,
  * ReferenceError "jk is not defined") went unnoticed. */
-const lenBytes = len => {
+const lenBytes = (len) => {
   if (len < 0x80) return Buffer.from([len]);
   const b = [];
   let v = len;
@@ -24,9 +24,9 @@ const lenBytes = len => {
 const tlv = (tag, content) =>
   Buffer.concat([Buffer.from([tag]), lenBytes(content.length), content]);
 const seq = (...parts) => tlv(0x30, Buffer.concat(parts));
-const octstr = b => tlv(0x04, b);
+const octstr = (b) => tlv(0x04, b);
 const int0 = tlv(0x02, Buffer.from([0]));
-const oid = dotted => {
+const oid = (dotted) => {
   const p = dotted.split(".").map(Number);
   const bytes = [p[0] * 40 + p[1]];
   for (const arc of p.slice(2)) {

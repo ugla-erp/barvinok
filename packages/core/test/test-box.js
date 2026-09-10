@@ -1,5 +1,5 @@
 import { beforeAll, afterAll, describe, it } from "vitest";
-import gost89 from "gost89";
+import gost89 from "barvinok-gost89";
 import assert from "assert";
 import * as jk from "../lib";
 import { assetPath, loadAsset, loadPriv, loadCert } from "./utils.js";
@@ -26,9 +26,9 @@ describe("Box", () => {
       version: 1,
       digestAlgorithms: [],
       contentInfo: { contentType: "data" },
-      certificate: [cert, cert6929, toCert, certE54B].map(cert => cert.ob),
-      signerInfos: []
-    }
+      certificate: [cert, cert6929, toCert, certE54B].map((cert) => cert.ob),
+      signerInfos: [],
+    },
   };
 
   describe("transport", () => {
@@ -36,15 +36,15 @@ describe("Box", () => {
 
     it("should parse transport buffer headers", async () => {
       const {
-        pipe: [head]
+        pipe: [head],
       } = await box.unwrap(transport);
       assert.deepEqual(head, {
         transport: true,
         headers: {
           EDRPOU: "1234567891",
           RCV_EMAIL: "user@tax.mail.com",
-          DOC_TYPE: "3"
-        }
+          DOC_TYPE: "3",
+        },
       });
     });
 
@@ -70,7 +70,7 @@ describe("Box", () => {
       assert.deepEqual(signed.cert.subject, {
         localityName: "Wakanda",
         organizationName: "Very Much CA",
-        serialNumber: "UA-99999999"
+        serialNumber: "UA-99999999",
       });
       assert.equal(!!signed.cert.verified, false);
     });
@@ -85,7 +85,7 @@ describe("Box", () => {
       assert.deepEqual(signed.cert.subject, {
         localityName: "Wakanda",
         organizationName: "Very Much CA",
-        serialNumber: "UA-99999999"
+        serialNumber: "UA-99999999",
       });
       assert.equal(signed.cert.verified, true);
     });
@@ -163,10 +163,7 @@ describe("Box", () => {
       boxWithKey.load({ priv: privEnc40A0, cert: toCert });
       boxWithKey.load({ cert: wicked6929 });
 
-      assert.rejects(
-        () => boxWithKey.unwrap(p7s),
-        /Key unwrap failed. Checksum mismatch/
-      );
+      assert.rejects(() => boxWithKey.unwrap(p7s), /Key unwrap failed. Checksum mismatch/);
     });
 
     it("should unwrap be okay if right certificate is before wrong one (collision)", async () => {
@@ -216,7 +213,7 @@ describe("Box", () => {
       const keys = [
         { cert: cert6929 },
         { priv: privEnc40A0, cert: toCert },
-        { priv: privEncE54B, cert: certE54B }
+        { priv: privEncE54B, cert: certE54B },
       ];
       const boxWithKey = new jk.Box({ algo, keys });
       const { content, error } = await boxWithKey.unwrap(p7s);
@@ -230,7 +227,7 @@ describe("Box", () => {
         { cert: toCert },
         { cert: certE54B },
         { priv: privEnc40A0 },
-        { priv: privEncE54B }
+        { priv: privEncE54B },
       ];
       const boxWithKey = new jk.Box({ algo, keys });
       const { content } = await boxWithKey.unwrap(p7s);
@@ -249,7 +246,7 @@ describe("Box", () => {
         const boxWithKey = new jk.Box({ algo });
         boxWithKey.load({ privPath: assetPath("Key40A0.cer") });
         boxWithKey.load({
-          certPath: assetPath("SELF_SIGNED_ENC_40A0.cer")
+          certPath: assetPath("SELF_SIGNED_ENC_40A0.cer"),
         });
         const { content } = await boxWithKey.unwrap(p7s);
         assert.deepEqual(content, Buffer.from("123"));
@@ -259,10 +256,10 @@ describe("Box", () => {
         const boxWithKey = new jk.Box({ algo });
         boxWithKey.load({
           privPath: assetPath("STORE_A040.pem"),
-          password: "password"
+          password: "password",
         });
         boxWithKey.load({
-          certPath: assetPath("SELF_SIGNED_ENC_40A0.cer")
+          certPath: assetPath("SELF_SIGNED_ENC_40A0.cer"),
         });
         const { content } = await boxWithKey.unwrap(p7s);
         assert.deepEqual(content, Buffer.from("123"));
@@ -272,10 +269,10 @@ describe("Box", () => {
     it("should read encrypted key from filesystem", async () => {
       const boxWithKey = new jk.Box({ algo });
       boxWithKey.load({
-        privPem: loadAsset("Key40A0.pem")
+        privPem: loadAsset("Key40A0.pem"),
       });
       boxWithKey.load({
-        certPem: loadAsset("SELF_SIGNED_ENC_40A0.cer")
+        certPem: loadAsset("SELF_SIGNED_ENC_40A0.cer"),
       });
       const { content } = await boxWithKey.unwrap(p7s);
       assert.deepEqual(content, Buffer.from("123"));
@@ -300,23 +297,14 @@ describe("Box", () => {
 
     it("should sign message with signing key", async () => {
       await boxWithKey
-        .pipe(
-          Buffer.from("123"),
-          [{ op: "sign", time }],
-          {}
-        )
-        .then(data => assert.deepEqual(data, loadAsset("message.p7")));
+        .pipe(Buffer.from("123"), [{ op: "sign", time }], {})
+        .then((data) => assert.deepEqual(data, loadAsset("message.p7")));
     });
 
     it("should sign message with signing key (async)", async () => {
-      await boxWithKey
-        .pipe(
-          Buffer.from("123"),
-          [{ op: "sign", time }]
-        )
-        .then(data => {
-          assert.deepEqual(data, loadAsset("message.p7"));
-        });
+      await boxWithKey.pipe(Buffer.from("123"), [{ op: "sign", time }]).then((data) => {
+        assert.deepEqual(data, loadAsset("message.p7"));
+      });
     });
   });
 
@@ -326,42 +314,27 @@ describe("Box", () => {
 
     it("should throw if receipient not specified", async () => {
       assert.rejects(
-        () =>
-          boxWithKey.pipe(
-            Buffer.from("123"),
-            [{ op: "encrypt" }],
-            {}
-          ),
-        /No recipient specified for encryption/
+        () => boxWithKey.pipe(Buffer.from("123"), [{ op: "encrypt" }], {}),
+        /No recipient specified for encryption/,
       );
     });
 
     it("should encrypt message with encryption key", async () => {
       await boxWithKey
-        .pipe(
-          Buffer.from("123"),
-          [{ op: "encrypt", forCert: toCert }]
-        )
-        .then(data => assert.deepEqual(data, loadAsset("enc_message.p7")));
+        .pipe(Buffer.from("123"), [{ op: "encrypt", forCert: toCert }])
+        .then((data) => assert.deepEqual(data, loadAsset("enc_message.p7")));
     });
 
     it("should encrypt message with encryption key and recipient passed as PEM", async () => {
       await boxWithKey
-        .pipe(
-          Buffer.from("123"),
-          [{ op: "encrypt", forCert: toCert.to_pem() }],
-          {}
-        )
-        .then(data => assert.deepEqual(data, loadAsset("enc_message.p7")));
+        .pipe(Buffer.from("123"), [{ op: "encrypt", forCert: toCert.to_pem() }], {})
+        .then((data) => assert.deepEqual(data, loadAsset("enc_message.p7")));
     });
 
     it("should encrypt message with encryption key (async)", async () => {
       await boxWithKey
-        .pipe(
-          Buffer.from("123"),
-          [{ op: "encrypt", forCert: toCert }]
-        )
-        .then(data => assert.deepEqual(data, loadAsset("enc_message.p7")));
+        .pipe(Buffer.from("123"), [{ op: "encrypt", forCert: toCert }])
+        .then((data) => assert.deepEqual(data, loadAsset("enc_message.p7")));
     });
   });
 });

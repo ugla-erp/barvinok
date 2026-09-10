@@ -9,18 +9,18 @@ class CertificateRef {
     return new CertificateRef({
       otherCertHash: {
         hashAlgorithm: {
-          algorithm: hashFn.algo || "Gost34311"
+          algorithm: hashFn.algo || "Gost34311",
         },
-        hashValue: hashFn(cert.to_asn1())
+        hashValue: hashFn(cert.to_asn1()),
       },
-      issuerSerial: cert.nameSerial()
+      issuerSerial: cert.nameSerial(),
     });
   }
 
   static toCades(list) {
     return cades.CompleteCertificateRefs.encode(
-      list.map(iter => iter.ob),
-      "der"
+      list.map((iter) => iter.ob),
+      "der",
     );
   }
 }

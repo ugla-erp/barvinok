@@ -1,0 +1,7 @@
+dist/
+coverage/
+node_modules/
+# Vendor drop kept byte-identical to upstream asn1.js so it can be re-synced — see packages/asn1.
+packages/asn1/
+# Test fixtures are captured bytes, not source.
+packages/*/test/data/

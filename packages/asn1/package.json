@@ -1,0 +1,35 @@
+{
+  "name": "barvinok-asn1",
+  "version": "0.1.0",
+  "description": "asn1.js 5.4.1 with the CHOICE-encoding parent fix barvinok requires (a three-line delta; see README)",
+  "main": "lib/asn1.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ugla-erp/barvinok.git",
+    "directory": "packages/asn1"
+  },
+  "keywords": [
+    "asn.1",
+    "der"
+  ],
+  "author": "Fedor Indutny",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/indutny/asn1.js/issues"
+  },
+  "homepage": "https://github.com/indutny/asn1.js",
+  "dependencies": {
+    "bn.js": "^5.2.5",
+    "inherits": "^2.0.1",
+    "minimalistic-assert": "^1.0.0",
+    "safer-buffer": "^2.1.0"
+  },
+  "files": [
+    "lib/",
+    "LICENSE",
+    "README.md"
+  ],
+  "engines": {
+    "node": ">=22"
+  }
+}

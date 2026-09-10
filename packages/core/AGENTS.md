@@ -17,7 +17,7 @@ is AI-assisted or even when it's explicitly disclosed.
 Adopt pen style and writing form of a ponytail developer and make sure changed
 code blends into environment nicely. This project is not in active
 development and changes should be surgically precise, minimal and
-nondisruptive. 
+nondisruptive.
 
 # Automatic tools in CI
 

@@ -1,28 +1,41 @@
 {
-  "name": "gost89",
-  "version": "0.1.12",
+  "name": "barvinok-gost89",
+  "version": "0.1.0",
   "description": "Gost89 in JS",
   "main": "index.js",
   "scripts": {
-    "test": "mocha --reporter spec ./test/test*.js"
+    "test": "vitest run"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/dstucrypt/gost89.git"
+    "url": "git+https://github.com/ugla-erp/barvinok.git",
+    "directory": "packages/gost89"
   },
   "keywords": [
     "gost89"
   ],
   "author": "Ilya Petrov",
-  "license": "BSD",
+  "license": "Apache-2.0",
   "bugs": {
-    "url": "https://github.com/dstucrypt/gost89/issues"
+    "url": "https://github.com/ugla-erp/barvinok/issues"
   },
-  "homepage": "https://github.com/dstucrypt/gost89",
-  "devDependencies": {
-    "mocha": "^5.2.0"
-  },
+  "homepage": "https://github.com/ugla-erp/barvinok/tree/main/packages/gost89#readme",
   "dependencies": {
-    "buffer": ">= 3.0"
+    "buffer": "^5.7.1"
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "files": [
+    "index.js",
+    "lib/",
+    "LICENSE",
+    "README.md"
+  ],
+  "exports": {
+    ".": "./index.js",
+    "./compat": "./lib/compat.js",
+    "./lib/*": "./lib/*",
+    "./package.json": "./package.json"
   }
 }

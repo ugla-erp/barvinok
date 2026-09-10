@@ -1,55 +1,46 @@
-import asn1 from "asn1.js";
+import asn1 from "barvinok-asn1";
 import * as rfc3280 from "./rfc3280.js";
 
 var OID = {
   "1 2 804 2 1 1 1 1 3 1 1": "DSTU_4145_LE",
   "1 3 6 1 4 1 19398 1 1 2 3": "DSTU_4145_KEY_BITS",
-  "1 3 6 1 4 1 19398 1 1 2 2": "DSTU_4145_CURVE"
+  "1 3 6 1 4 1 19398 1 1 2 2": "DSTU_4145_CURVE",
 };
 
-var KeyAttrValue = asn1.define("KeyAttrValue", function() {
+var KeyAttrValue = asn1.define("KeyAttrValue", function () {
   this.choice({
     param_d: this.bitstr(),
     dstu4145: this.use(DstuParams),
-    unknown: this.any()
+    unknown: this.any(),
   });
 });
 
-var KeyAttrValues = asn1.define("KeyAttrValues", function() {
+var KeyAttrValues = asn1.define("KeyAttrValues", function () {
   this.setof(KeyAttrValue);
 });
 
-var KeyAttr = asn1.define("Attr", function() {
-  this.seq().obj(
-    this.key("id").objid(OID),
-    this.key("value").use(KeyAttrValues)
-  );
+var KeyAttr = asn1.define("Attr", function () {
+  this.seq().obj(this.key("id").objid(OID), this.key("value").use(KeyAttrValues));
 });
 
-var Pentanominal = asn1.define("Pentanominal", function() {
-  this.seq().obj(
-    this.key("k1").int(),
-    this.key("k2").int(),
-    this.key("k3").int()
-  );
+var Pentanominal = asn1.define("Pentanominal", function () {
+  this.seq().obj(this.key("k1").int(), this.key("k2").int(), this.key("k3").int());
 });
 
-var Polynomial = asn1.define("Polynomial", function() {
+var Polynomial = asn1.define("Polynomial", function () {
   this.choice({
     trinominal: this.int(),
-    pentanominal: this.use(Pentanominal)
+    pentanominal: this.use(Pentanominal),
   });
 });
 
-var CurveParams = asn1.define("CurveParams", function() {
+var CurveParams = asn1.define("CurveParams", function () {
   this.seq().obj(
-    this.key("p")
-      .seq()
-      .obj(this.key("param_m").int(), this.key("ks").use(Polynomial)),
+    this.key("p").seq().obj(this.key("param_m").int(), this.key("ks").use(Polynomial)),
     this.key("param_a").int(),
     this.key("param_b").octstr(), // inverted
     this.key("order").int(),
-    this.key("bp").octstr()
+    this.key("bp").octstr(),
   );
 });
 
@@ -64,58 +55,44 @@ var CURVES = {
   "1 2 804 2 1 1 1 1 3 1 1 2 7": "DSTU_PB_307",
   "1 2 804 2 1 1 1 1 3 1 1 2 8": "DSTU_PB_367",
   "1 2 804 2 1 1 1 1 3 1 1 2 9": "DSTU_PB_431",
-  "1 2 840 10045 3 1 7": "secp256r1"
+  "1 2 840 10045 3 1 7": "secp256r1",
 };
 
-var Curve = asn1.define("Curve", function() {
+var Curve = asn1.define("Curve", function () {
   this.choice({
     id: this.objid(CURVES),
-    params: this.use(CurveParams)
+    params: this.use(CurveParams),
   });
 });
 
-var DstuParams = asn1.define("CurveParams", function() {
+var DstuParams = asn1.define("CurveParams", function () {
   this.seq().obj(
     this.key("curve").use(Curve),
-    this.key("dke")
-      .optional()
-      .octstr(),
-    this.key("dke2")
-      .optional()
-      .octstr()
+    this.key("dke").optional().octstr(),
+    this.key("dke2").optional().octstr(),
   );
 });
 export { DstuParams };
 rfc3280.injectPubAlgo("Dstu4145le", DstuParams);
 rfc3280.injectPubAlgo("ECDSA", Curve);
 
-var DstuPrivkey = asn1.define("DstuPrivkey", function() {
+var DstuPrivkey = asn1.define("DstuPrivkey", function () {
   this.seq().obj(
     this.key("version").int(),
     this.key("priv0")
       .seq()
       .obj(
         this.key("id").objid(OID),
-        this.key("p")
-          .seq()
-          .obj(
-            this.key("p").use(Curve),
-            this.key("sbox")
-              .optional()
-              .octstr()
-          )
+        this.key("p").seq().obj(this.key("p").use(Curve), this.key("sbox").optional().octstr()),
       ),
     this.key("param_d").octstr(),
-    this.key("attr")
-      .optional()
-      .implicit(0)
-      .seqof(KeyAttr)
+    this.key("attr").optional().implicit(0).seqof(KeyAttr),
   );
 });
 
 export { DstuPrivkey };
 
-var StoreIIT = asn1.define("StoreIIT", function() {
+var StoreIIT = asn1.define("StoreIIT", function () {
   this.seq().obj(
     this.key("cryptParam")
       .seq()
@@ -126,22 +103,17 @@ var StoreIIT = asn1.define("StoreIIT", function() {
           "1 2 840 113549 1 5 12": "PBKDF2",
           "1 2 804 2 1 1 1 1 1 2": "GOST_34311_HMAC",
           "1 2 804 2 1 1 1 1 1 1 3": "GOST_28147_CFB",
-          "1 2 804 2 1 1 1 1 3 1 1": "DSTU_4145_LE"
+          "1 2 804 2 1 1 1 1 3 1 1": "DSTU_4145_LE",
         }),
         this.key("cryptParam")
           .seq()
-          .obj(
-            this.key("mac").octstr(),
-            this.key("pad")
-              .octstr()
-              .optional()
-          )
+          .obj(this.key("mac").octstr(), this.key("pad").octstr().optional()),
       ),
-    this.key("cryptData").octstr()
+    this.key("cryptData").octstr(),
   );
 });
 
-var enc_parse = function(data) {
+var enc_parse = function (data) {
   var asn1 = StoreIIT.decode(data, "der"),
     mac,
     pad;
@@ -162,11 +134,11 @@ var enc_parse = function(data) {
     format: "IIT",
     mac: mac,
     pad: pad,
-    body: asn1.cryptData
+    body: asn1.cryptData,
   };
 };
 
-var enc_parse_many = function(data) {
+var enc_parse_many = function (data) {
   return [enc_parse(data)];
 };
 

@@ -1,13 +1,13 @@
 {
-  "name": "jksreader",
-  "version": "1.0.0",
+  "name": "barvinok-keystore",
+  "version": "0.1.0",
   "description": "JKS format decoder",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "vitest run"
   },
   "author": "Ilya Petrov",
-  "license": "BSD",
+  "license": "Apache-2.0",
   "dependencies": {
     "js-sha1": "^0.6.0"
   },
@@ -17,6 +17,21 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git@github.com:dstucrypt/jksreader"
+    "url": "git+https://github.com/ugla-erp/barvinok.git",
+    "directory": "packages/keystore"
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "files": [
+    "decode.js",
+    "index.js",
+    "parse.js",
+    "LICENSE",
+    "README.md"
+  ],
+  "exports": {
+    ".": "./index.js",
+    "./package.json": "./package.json"
   }
 }

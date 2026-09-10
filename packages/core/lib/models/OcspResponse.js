@@ -7,11 +7,11 @@ class OCSPError extends Error {}
 function encodeSpec(cert, serial, hashFn) {
   return (certSpec = {
     hashAlgorithm: {
-      algorithm: hashFn.algo || "Gost34311"
+      algorithm: hashFn.algo || "Gost34311",
     },
     issuerNameHash: hashFn(cert.name_asn1()),
     issuerKeyHash: cert.extension.authorityKeyIdentifier,
-    serialNumber: serial
+    serialNumber: serial,
   });
 }
 
@@ -28,7 +28,7 @@ function findByName(query, list) {
 function findByKey(query, list) {
   for (let cert of list) {
     const keyIdExt = cert.tbsCertificate.extensions.find(
-      e => e.extnID === "subjectKeyIdentifier"
+      (e) => e.extnID === "subjectKeyIdentifier",
     );
     if (!keyIdExt) {
       continue;
@@ -41,7 +41,7 @@ function findByKey(query, list) {
 }
 
 function checkNonce(tbs, nonce) {
-  const ext = tbs.responseExtensions.find(part => part.extnID === "OCSPNonce");
+  const ext = tbs.responseExtensions.find((part) => part.extnID === "OCSPNonce");
   if (!ext || !ext.extnValue.equals(nonce)) {
     throw new OCSPError();
   }
@@ -49,9 +49,9 @@ function checkNonce(tbs, nonce) {
 
 function findByIssuerSerial(list, issuerDN, serial) {
   return list.find(
-    iter =>
+    (iter) =>
       Certificate.formatDN(iter.tbsCertificate.issuer.value) === issuerDN &&
-      iter.tbsCertificate.serialNumber.eq(serial)
+      iter.tbsCertificate.serialNumber.eq(serial),
   );
 }
 
@@ -61,17 +61,17 @@ class Ref {
   }
 }
 
-Ref.toCades = function(list) {
-  const ob = list.map(iter =>
-    iter.length ? { ocspids: { ocspResponses: iter.map(ref => ref.ob) } } : {}
+Ref.toCades = function (list) {
+  const ob = list.map((iter) =>
+    iter.length ? { ocspids: { ocspResponses: iter.map((ref) => ref.ob) } } : {},
   );
   return cades.RevocationRefs.encode(ob, "der");
 };
 
-Ref.fromCades = function(raw) {
+Ref.fromCades = function (raw) {
   const response = cades.RevocationRefs.decode(raw, "der");
-  return response.map(ob =>
-    ((ob.ocspids && ob.ocspids.ocspResponses) || []).map(iter => new Ref(iter))
+  return response.map((ob) =>
+    ((ob.ocspids && ob.ocspids.ocspResponses) || []).map((iter) => new Ref(iter)),
   );
 };
 
@@ -84,14 +84,14 @@ class OcspResponse {
     return new Ref({
       ocspIdentifier: {
         ocspResponderID: this.ob.tbsResponseData.responderID,
-        producedAt: this.ob.tbsResponseData.producedAt
+        producedAt: this.ob.tbsResponseData.producedAt,
       },
       ocspRepHash: {
         hashAlgorithm: {
-          algorithm: ctx.hashFn.algo || "Gost34311"
+          algorithm: ctx.hashFn.algo || "Gost34311",
         },
-        hashValue: ctx.hashFn(this.to_asn1())
-      }
+        hashValue: ctx.hashFn(this.to_asn1()),
+      },
     });
   }
 
@@ -111,8 +111,8 @@ class OcspResponse {
 
     const responderID = response.tbsResponseData.responderID;
     const queryFn = {
-      byName: query => findByName(query, response.certs),
-      byKey: query => findByKey(query, response.certs)
+      byName: (query) => findByName(query, response.certs),
+      byKey: (query) => findByKey(query, response.certs),
     }[responderID.type];
     if (!queryFn) {
       throw new OCSPError();
@@ -121,23 +121,21 @@ class OcspResponse {
     const responderOk = responder.verify(
       { time: status.thisUpdate, usage: "ocspSigning" },
       { Dstu4145le: ctx.hashFn },
-      ctx.lookupCA
+      ctx.lookupCA,
     );
     if (!responderOk) {
       throw new OCSPError();
     }
 
     const signedBySame = responder.extension.authorityKeyIdentifier.equals(
-      cert.extension.authorityKeyIdentifier
+      cert.extension.authorityKeyIdentifier,
     );
     if (!signedBySame) {
       throw new OCSPError();
     }
 
     const tbs = rfc2560.ResponseData.encode(response.tbsResponseData, "der");
-    const isValid = responder
-      .pubkey_unpack()
-      .verify(ctx.hashFn(tbs), response.signature.data);
+    const isValid = responder.pubkey_unpack().verify(ctx.hashFn(tbs), response.signature.data);
     if (!isValid) {
       throw new OCSPError();
     }
@@ -158,7 +156,7 @@ class OcspResponse {
       statusOk: status.certStatus.type === "good",
       time: status.thisUpdate,
       isOcspStamp,
-      cert: findByIssuerSerial(response.certs, cert.issuerDN(), serial)
+      cert: findByIssuerSerial(response.certs, cert.issuerDN(), serial),
     };
   }
 
@@ -167,17 +165,17 @@ class OcspResponse {
   }
 }
 
-OcspResponse.fromBasic = function(raw) {
+OcspResponse.fromBasic = function (raw) {
   return new OcspResponse(rfc2560.BasicOCSPResponse.decode(raw, "der"));
 };
 
-OcspResponse.fromCades = function(raw) {
+OcspResponse.fromCades = function (raw) {
   const response = cades.RevocationValues.decode(raw, "der");
-  return response.ocspVals.map(ob => new OcspResponse(ob));
+  return response.ocspVals.map((ob) => new OcspResponse(ob));
 };
 
-OcspResponse.toCades = function(list) {
-  const ocspVals = list.map(iter => iter.ob);
+OcspResponse.toCades = function (list) {
+  const ocspVals = list.map((iter) => iter.ob);
   return cades.RevocationValues.encode({ ocspVals }, "der");
 };
 

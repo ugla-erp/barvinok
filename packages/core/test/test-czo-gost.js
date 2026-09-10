@@ -1,12 +1,12 @@
 import { describe, it, expect } from "vitest";
-import gost89 from "gost89";
+import gost89 from "barvinok-gost89";
 import * as jk from "../lib/index.js";
 import { loadAsset } from "./utils.js";
 
 describe("CZO CAdES-BES GOST", () => {
   const gostHash = gost89.compat.algos().hash;
   const box = new jk.Box({
-    algo: { hash: gostHash, hashes: { Gost34311: gostHash } }
+    algo: { hash: gostHash, hashes: { Gost34311: gostHash } },
   });
   const p7s = loadAsset("test-gost-czo.p7s");
 
@@ -19,7 +19,7 @@ describe("CZO CAdES-BES GOST", () => {
 
   it("unwraps with CA verification", async () => {
     const caBox = new jk.Box({
-      algo: { hash: gostHash, hashes: { Gost34311: gostHash, Dstu4145le: gostHash } }
+      algo: { hash: gostHash, hashes: { Gost34311: gostHash, Dstu4145le: gostHash } },
     });
     caBox.loadCAs(loadAsset("CZO-CA-LIST.p7s"));
 

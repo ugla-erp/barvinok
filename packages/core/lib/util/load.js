@@ -1,5 +1,5 @@
 import fs from "fs";
-import jksreader from "jksreader";
+import jksreader from "barvinok-keystore";
 
 import complain from "./complain.js";
 import Priv from "../models/Priv.js";
@@ -44,29 +44,19 @@ function load(keyinfo, algo) {
   if (keyinfo.privPath) {
     complain("keyinfo.privPath is deprecated and would be removed");
     let keyPaths =
-      typeof keyinfo.privPath === "string"
-        ? [keyinfo.privPath]
-        : keyinfo.privPath || [];
+      typeof keyinfo.privPath === "string" ? [keyinfo.privPath] : keyinfo.privPath || [];
 
-    keyBuffers = [
-      ...keyBuffers,
-      ...keyPaths.map(path => fs.readFileSync(path))
-    ];
+    keyBuffers = [...keyBuffers, ...keyPaths.map((path) => fs.readFileSync(path))];
   }
   let certBuffers = keyinfo.certBuffers || [];
   if (keyinfo.certPath) {
     complain("keyinfo.certPath is deprecated and would be removed");
     let certPaths =
-      typeof keyinfo.certPath === "string"
-        ? [keyinfo.certPath]
-        : keyinfo.certPath || [];
-    certBuffers = [
-      ...certBuffers,
-      ...certPaths.map(path => fs.readFileSync(path))
-    ];
+      typeof keyinfo.certPath === "string" ? [keyinfo.certPath] : keyinfo.certPath || [];
+    certBuffers = [...certBuffers, ...certPaths.map((path) => fs.readFileSync(path))];
   }
 
-  keyBuffers.forEach(buf => {
+  keyBuffers.forEach((buf) => {
     // detect garbage in file header (meeedok)
     const content = buf[0] === 0x51 ? buf.slice(6) : buf;
     const jksStore = jksreader.parse(content);
@@ -79,13 +69,11 @@ function load(keyinfo, algo) {
     } catch (ignore) {
       throw new Error("Cant load key from store");
     }
-    store.keys.forEach(priv => ret.push({ priv }));
-    store.certs.forEach(cert =>
-      ret.push({ cert: Certificate.from_asn1(cert) })
-    );
+    store.keys.forEach((priv) => ret.push({ priv }));
+    store.certs.forEach((cert) => ret.push({ cert: Certificate.from_asn1(cert) }));
   });
 
-  certBuffers.forEach(cert => ret.push({ cert: Certificate.from_pem(cert) }));
+  certBuffers.forEach((cert) => ret.push({ cert: Certificate.from_pem(cert) }));
   return ret;
 }
 

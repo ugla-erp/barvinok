@@ -124,23 +124,23 @@ class Field {
 
   less(other) {
     let blen = this.length,
-        olen = other.length,
-        bb = this.bytes,
-        ob = other.bytes;
+      olen = other.length,
+      bb = this.bytes,
+      ob = other.bytes;
 
     while (olen > 0 && ob[olen - 1] === 0) olen--;
     while (blen > 0 && bb[blen - 1] === 0) blen--;
 
     if (blen < olen) {
-        return true;
+      return true;
     }
     if (olen < blen) {
-        return false;
+      return false;
     }
 
     for (let i = blen - 1; i >= 0; i--) {
-        if (bb[i] < ob[i]) return true;
-        if (bb[i] > ob[i]) return false;
+      if (bb[i] < ob[i]) return true;
+      if (bb[i] > ob[i]) return false;
     }
 
     return false;
@@ -196,11 +196,7 @@ class Field {
   shiftRight(bits) {
     if (bits === 0) return this.clone();
 
-    return new Field(
-      _pure.shiftRight(this.bytes, bits, false),
-      undefined,
-      this.curve
-    );
+    return new Field(_pure.shiftRight(this.bytes, bits, false), undefined, this.curve);
   }
 
   shiftRightM(bits) {

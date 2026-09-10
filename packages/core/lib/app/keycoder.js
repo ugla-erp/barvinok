@@ -1,4 +1,4 @@
-import asn1 from "asn1.js";
+import asn1 from "barvinok-asn1";
 import { Buffer } from "buffer";
 import * as pbes2 from "../spec/pbes";
 import * as pfx from "../spec/pfx";
@@ -9,9 +9,7 @@ import * as util from "../util";
 
 class Keycoder {
   constructor() {
-    console.warn(
-      "Keycoder instances are deprecated. Use jk.guess_parse() to parse keys"
-    );
+    console.warn("Keycoder instances are deprecated. Use jk.guess_parse() to parse keys");
   }
 
   is_valid(indata) {
@@ -39,13 +37,7 @@ function cert_parse(data) {
   return models.Certificate.from_asn1(data);
 }
 
-const parsers = [
-  enc_parse,
-  pbes2.pbes2_parse,
-  pfx.pfx_parse,
-  privkey_parse,
-  cert_parse
-];
+const parsers = [enc_parse, pbes2.pbes2_parse, pfx.pfx_parse, privkey_parse, cert_parse];
 
 function guess_parse(indata) {
   if (!Buffer.isBuffer(indata)) {

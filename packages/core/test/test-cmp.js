@@ -18,14 +18,14 @@ function successResponse(certs) {
         digestAlgorithms: [],
         contentInfo: { contentType: "data" },
         certificate: certs.map((c) => c.ob),
-        signerInfos: []
-      }
+        signerInfos: [],
+      },
     },
-    "der"
+    "der",
   );
   return ContentInfo.encode(
     { contentType: "data", content: Buffer.concat([header, signed]) },
-    "der"
+    "der",
   );
 }
 
@@ -36,7 +36,7 @@ describe("cmp service", () => {
     const certificates = await cmp.lookup(
       [Buffer.alloc(32, 1)],
       "http://cmp.example.test/",
-      (method, url, headers, payload, cb) => cb(response, 200)
+      (method, url, headers, payload, cb) => cb(response, 200),
     );
     assert.equal(certificates.length, 1);
     assert.ok(certificates[0] instanceof jk.Certificate);

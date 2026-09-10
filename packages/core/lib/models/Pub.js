@@ -101,11 +101,7 @@ class Pub {
   }
 
   static detect_sign_format(sign) {
-    if (
-      sign.hasOwnProperty &&
-      sign.hasOwnProperty("s") &&
-      sign.hasOwnProperty("r")
-    ) {
+    if (sign.hasOwnProperty && sign.hasOwnProperty("s") && sign.hasOwnProperty("r")) {
       return "split";
     }
     if (typeof sign === "string" || Buffer.isBuffer(sign)) {
@@ -133,7 +129,7 @@ class Pub {
 
       sign = {
         s: util.add_zero(s, true),
-        r: util.add_zero(r, true)
+        r: util.add_zero(r, true),
       };
       fmt = "split";
     }
@@ -148,7 +144,7 @@ class Pub {
 
       return {
         s: new Field(sign.s, "buf8", curve),
-        r: new Field(sign.r, "buf8", curve)
+        r: new Field(sign.r, "buf8", curve),
       };
     }
   }

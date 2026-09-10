@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import gost89 from "gost89";
+import gost89 from "barvinok-gost89";
 import * as jk from "../lib/index.js";
 import { loadAsset } from "./utils.js";
 
@@ -9,7 +9,7 @@ describe("CZO CAdES-T", () => {
 
   function makeBox() {
     return new jk.Box({
-      algo: { hash: gostHash, hashes: { Gost34311: gostHash, Dstu4145le: gostHash } }
+      algo: { hash: gostHash, hashes: { Gost34311: gostHash, Dstu4145le: gostHash } },
     });
   }
 

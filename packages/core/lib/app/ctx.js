@@ -30,10 +30,7 @@ const filterRid = function filterRid(rid, ob) {
   }
 
   if (rid.type === "issuerAndSerialNumber") {
-    const rdnQuery = Certificate.formatRDN(
-      rid.value.serialNumber,
-      rid.value.issuer.value
-    );
+    const rdnQuery = Certificate.formatRDN(rid.value.serialNumber, rid.value.issuer.value);
     return ob.cert.rdnSerial() === rdnQuery;
   }
   return false;
@@ -65,7 +62,7 @@ class Box {
     return {
       query: this.query,
       lookupCA: this.lookupCA.bind(this),
-      hashFn: this.algo.hash
+      hashFn: this.algo.hash,
     };
   }
 
@@ -87,8 +84,8 @@ class Box {
 
   async loadCertsCmp(url) {
     const keyids = this.keys
-      .filter(info => info.priv)
-      .map(info => info.priv.pub().keyid(this.algo));
+      .filter((info) => info.priv)
+      .map((info) => info.priv.pub().keyid(this.algo));
     const [key0, key1] = keyids;
 
     const certificates = await cmpService.lookup(keyids, url, this.query);
@@ -109,14 +106,14 @@ class Box {
     if (urlsHint && urlsHint.length) {
       steps = [urlsHint];
     } else {
-      steps = this.getUniqueOCSPUrls().map(url => [url.replace(/ocsp/, "cmp")]);
+      steps = this.getUniqueOCSPUrls().map((url) => [url.replace(/ocsp/, "cmp")]);
     }
-    const loadOne = url => {
-      return this.loadCertsCmp(url).catch(e => 0);
+    const loadOne = (url) => {
+      return this.loadCertsCmp(url).catch((e) => 0);
     };
     for (let step of steps) {
       let results = await Promise.all(step.map(loadOne));
-      let nonZero = results.find(number => number > 0);
+      let nonZero = results.find((number) => number > 0);
       if (nonZero) {
         return nonZero;
       }
@@ -130,7 +127,7 @@ class Box {
       return this._cachedOcspUrls;
     }
     this._cachedOcspUrls = ret;
-    Object.keys(this.cas).forEach(idx => {
+    Object.keys(this.cas).forEach((idx) => {
       const calist = this.cas[idx];
       for (let ca of calist) {
         const cert = new Certificate(ca);
@@ -153,17 +150,17 @@ class Box {
     this.keys = Object.entries(this.keysById).map(([keyid, priv]) => ({
       priv,
       cert: this.certsById[keyid] || null,
-      keyid
+      keyid,
     }));
   }
 
   _indexCAs() {
-    Object.keys(this.cas).forEach(idx => {
+    Object.keys(this.cas).forEach((idx) => {
       const calist = this.cas[idx];
       for (let ca of calist) {
         const rdn = Certificate.formatRDN(
           ca.tbsCertificate.serialNumber,
-          ca.tbsCertificate.issuer.value
+          ca.tbsCertificate.issuer.value,
         );
         this.casRDN[rdn] = ca;
       }
@@ -206,10 +203,7 @@ class Box {
     if (query.keyid) {
       return this.lookupByKeyId(helpCerts, query.keyid);
     }
-    const rdnQuery = Certificate.formatRDN(
-      query.serialNumber,
-      query.issuer.value
-    );
+    const rdnQuery = Certificate.formatRDN(query.serialNumber, query.issuer.value);
     for (let cert of helpCerts) {
       if (cert.rdnSerial() === rdnQuery) {
         return cert;
@@ -239,9 +233,7 @@ class Box {
     const sidHex = sid ? sid.toString("hex") : null;
 
     let cachedRes =
-      sidHex && this.verifiedCache.hasOwnProperty(sidHex)
-        ? this.verifiedCache[sidHex]
-        : null;
+      sidHex && this.verifiedCache.hasOwnProperty(sidHex) ? this.verifiedCache[sidHex] : null;
 
     if (cachedRes && cachedRes.ctime < lastViable) {
       cachedRes = null;
@@ -253,15 +245,13 @@ class Box {
     }
 
     if (cachedRes && cachedRes.ret === true) {
-      return (
-        (usage ? cert.canUseFor(usage) : true) && cert.verifyTime(Number(time))
-      );
+      return (usage ? cert.canUseFor(usage) : true) && cert.verifyTime(Number(time));
     }
 
     const ret = cert.verify(
       { time, usage },
       { Dstu4145le: this.algo.hash },
-      this.lookupCA.bind(this)
+      this.lookupCA.bind(this),
     );
     this.verifiedCache[sidHex] = { ret, ctime: Date.now() };
     return ret;
@@ -290,8 +280,8 @@ class Box {
       return { statusOk: false, unknown: true };
     }
     const ocspCtx = this.ocspCtx;
-    let response = msg.puattrs.revocationValues.find(iterResponse =>
-      iterResponse.matches(cert, query.serialNumber, ocspCtx)
+    let response = msg.puattrs.revocationValues.find((iterResponse) =>
+      iterResponse.matches(cert, query.serialNumber, ocspCtx),
     );
     let nonce;
     const isOcspStamp = Boolean(response);
@@ -300,12 +290,7 @@ class Box {
     } else {
       nonce = rand(Buffer.alloc(20));
       try {
-        response = await ocspService.lookup(
-          cert,
-          query.serialNumber,
-          nonce,
-          ocspCtx
-        );
+        response = await ocspService.lookup(cert, query.serialNumber, nonce, ocspCtx);
       } catch (e) {}
     }
 
@@ -314,13 +299,7 @@ class Box {
     }
 
     try {
-      return response.verify(
-        ocspCtx,
-        cert,
-        query.serialNumber,
-        nonce,
-        isOcspStamp
-      );
+      return response.verify(ocspCtx, cert, query.serialNumber, nonce, isOcspStamp);
     } catch (e) {
       return { statusOk: false };
     }
@@ -356,7 +335,7 @@ class Box {
       signer: key.priv,
       hash: this.algo.hash,
       tspB,
-      signTime: opts.time
+      signTime: opts.time,
     });
     if (useSignatureTsp(opts.tsp)) {
       const signHash = this.algo.hash(message.signature);
@@ -366,9 +345,7 @@ class Box {
 
     if (opts.includeChain) {
       const chain = key.cert.getCompleteChain(this.lookupCA.bind(this));
-      message.addCertRefs(
-        chain.map(cert => CertificateRef.fromCert(cert, this.algo.hash))
-      );
+      message.addCertRefs(chain.map((cert) => CertificateRef.fromCert(cert, this.algo.hash)));
       if (opts.includeChain !== "ref") {
         message.addCertValues(chain);
       }
@@ -376,7 +353,7 @@ class Box {
 
     if (opts.ocsp) {
       let ocspResponses = await Promise.all(
-        message.signedWithCerts.map(async query => {
+        message.signedWithCerts.map(async (query) => {
           const lookup = this.lookupCert.bind(this, [key.cert]);
           const cert = this.lookupCertOrSibling(lookup, query);
           if (!cert) {
@@ -387,25 +364,17 @@ class Box {
             cert,
             query.serialNumber || cert.serial,
             nonce,
-            this.ocspCtx
-          );
-          const info = response.verify(
             this.ocspCtx,
-            cert,
-            query.serialNumber,
-            nonce,
-            false
           );
+          const info = response.verify(this.ocspCtx, cert, query.serialNumber, nonce, false);
           if (!info.statusOk) {
             return null;
           }
           return response;
-        })
+        }),
       );
-      ocspResponses = ocspResponses.filter(iter => iter);
-      message.addOcspHashes(
-        ocspResponses.map(iter => [iter.makeRef(this.ocspCtx)])
-      );
+      ocspResponses = ocspResponses.filter((iter) => iter);
+      message.addOcspHashes(ocspResponses.map((iter) => [iter.makeRef(this.ocspCtx)]));
       if (opts.ocsp !== "ref") {
         message.addOcspResponses(ocspResponses);
       }
@@ -424,7 +393,7 @@ class Box {
       toCert: forCert,
       data,
       crypter: key.priv,
-      algo: this.algo
+      algo: this.algo,
     });
   }
 
@@ -435,10 +404,10 @@ class Box {
       .filter(filterUsage.bind(null, op))
       .filter(filterRole.bind(null, role));
     if (!firstKey || !firstKey.priv) {
-      throw new ENOKEY(
-        `No key-certificate pair found for given op ${op} and role ${role}`,
-        { op, role }
-      );
+      throw new ENOKEY(`No key-certificate pair found for given op ${op} and role ${role}`, {
+        op,
+        role,
+      });
     }
     return firstKey;
   }
@@ -462,7 +431,7 @@ class Box {
     return this.pipe(
       cmd.tax ? msg.as_transport(opts, cmd.addCert) : msg.as_asn1(),
       restCommands,
-      opts
+      opts,
     );
   }
 
@@ -474,7 +443,7 @@ class Box {
     let signed;
     let key;
     let help_cert = [];
-    const lookup = query => this.lookupCert(help_cert, query);
+    const lookup = (query) => this.lookupCert(help_cert, query);
     while (data && data.length) {
       try {
         tr = transport.decode(data);
@@ -528,32 +497,25 @@ class Box {
         let ocspResult;
         if (opts.ocsp) {
           ocspResult = await Promise.all(
-            msg.signedWithCerts.map(query =>
-              this.lookupOCSP(lookup, query, msg)
-            )
+            msg.signedWithCerts.map((query) => this.lookupOCSP(lookup, query, msg)),
           );
 
           if (
             opts.ocsp === "lax"
-              ? !ocspResult.every(ocsp => ocsp.statusOk || !ocsp.requestOK)
-              : !ocspResult.every(ocsp => ocsp.statusOk)
+              ? !ocspResult.every((ocsp) => ocsp.statusOk || !ocsp.requestOK)
+              : !ocspResult.every((ocsp) => ocsp.statusOk)
           ) {
             info.pipe.push({ broken_cert: true, error: "EOCSP" });
             break;
           }
           let discoveredCerts = ocspResult
-            .filter(ocsp => ocsp.statusOk && ocsp.cert)
-            .map(ocsp => new Certificate(ocsp.cert));
+            .filter((ocsp) => ocsp.statusOk && ocsp.cert)
+            .map((ocsp) => new Certificate(ocsp.cert));
           help_cert = [...help_cert, ...discoveredCerts];
         }
 
         try {
-          signed = msg.verify(
-            this.algo.hash,
-            lookup,
-            this.lookupCA.bind(this),
-            opts
-          );
+          signed = msg.verify(this.algo.hash, lookup, this.lookupCA.bind(this), opts);
           x = msg.signer(lookup);
           if (!x.canUseFor("sign")) {
             throw new Message.ENOCERT();
@@ -574,13 +536,9 @@ class Box {
           cert: x.as_dict(),
           signingTime: msg.pattrs.signingTime,
           contentTime: (useContentTsp(opts.tsp) && msg.contentTime) || null,
-          tokenTime: (useSignatureTsp(opts.tsp) && msg.tokenTime) || null
+          tokenTime: (useSignatureTsp(opts.tsp) && msg.tokenTime) || null,
         };
-        let time =
-          entry.tokenTime ||
-          entry.contentTime ||
-          entry.signingTime ||
-          Date.now();
+        let time = entry.tokenTime || entry.contentTime || entry.signingTime || Date.now();
         if (this.hasCA) {
           entry.cert.verified = this.verifyCert(x, time, "sign");
           if (!entry.cert.verified) {
@@ -602,7 +560,7 @@ class Box {
           break;
         }
         info.pipe.push({
-          enc: true
+          enc: true,
         });
         try {
           data = msg.decrypt(key.priv, this.algo, lookup);

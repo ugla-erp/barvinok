@@ -1,13 +1,13 @@
-var sha1 = require('js-sha1');
+var sha1 = require("js-sha1");
 
 function encode_utf16(str) {
-    var buf = new Buffer(str.length * 2);
-    for(var i=0;i<str.length;i++) {
-        var code = str.charCodeAt(i);
-        buf[i*2] = (code & 0xFF00) >> 8;
-        buf[(i*2)+1] = code & 0xFF;
-    }
-    return buf;
+  var buf = new Buffer(str.length * 2);
+  for (var i = 0; i < str.length; i++) {
+    var code = str.charCodeAt(i);
+    buf[i * 2] = (code & 0xff00) >> 8;
+    buf[i * 2 + 1] = code & 0xff;
+  }
+  return buf;
 }
 
 function decode(buf, password) {
@@ -22,16 +22,16 @@ function decode(buf, password) {
   var cur = iv;
 
   while (pos < data.length) {
-      var hash = sha1.create();
-      hash.update(pw);
-      hash.update(cur);
-      cur = hash.digest();
+    var hash = sha1.create();
+    hash.update(pw);
+    hash.update(cur);
+    cur = hash.digest();
 
-      var i;
-      for(i=0; i<cur.length; i++) {
-          open[pos] = data[pos] ^ cur[i];
-          pos++;
-      }
+    var i;
+    for (i = 0; i < cur.length; i++) {
+      open[pos] = data[pos] ^ cur[i];
+      pos++;
+    }
   }
 
   var toCheck = sha1.create();
@@ -40,12 +40,11 @@ function decode(buf, password) {
   var digest = toCheck.digest();
 
   var match = 0;
-  for(var i=0; i<check.length; i++) {
-      match = (digest[i] ^ check[i]) || match;
+  for (var i = 0; i < check.length; i++) {
+    match = digest[i] ^ check[i] || match;
   }
 
-  return (match===0) ? open : null;
-
+  return match === 0 ? open : null;
 }
 
 module.exports = decode;

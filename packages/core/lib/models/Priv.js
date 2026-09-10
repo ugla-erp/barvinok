@@ -1,6 +1,6 @@
 /*jslint plusplus: true */
 import { Curve, std_curve as stdCurve } from "../curve.js";
-import asn1 from "asn1.js";
+import asn1 from "barvinok-asn1";
 import * as util from "../util.js";
 import random from "../rand.js";
 import * as pem from "../util/pem.js";
@@ -21,12 +21,12 @@ function gost_salt(ukm) {
     {
       keyInfo: {
         algorithm: "Gost28147-cfb-wrap",
-        parameters: null
+        parameters: null,
       },
       entityInfo: ukm || undefined,
-      suppPubInfo: Buffer.from("\x00\x00\x01\x00", "binary")
+      suppPubInfo: Buffer.from("\x00\x00\x01\x00", "binary"),
     },
-    "der"
+    "der",
   );
 }
 
@@ -76,7 +76,7 @@ function curve_params(p) {
     b: util.BIG_LE(p.param_b),
     order: util.BIG_BE(p.order.toArray()),
     kofactor: [4 >> p.param_a],
-    base: util.BIG_LE(p.bp)
+    base: util.BIG_LE(p.bp),
   });
 }
 
@@ -85,10 +85,7 @@ function from_asn1(data, return_store) {
 
   priv = DstuPrivkey.decode(data, "der");
   const params = priv.priv0.p.p;
-  curve =
-    params.type === "id"
-      ? stdCurve(params.value)
-      : curve_params(params.value);
+  curve = params.type === "id" ? stdCurve(params.value) : curve_params(params.value);
   key0 = curve.pkey(util.BIG_LE(priv.param_d), "buf32");
   key0.sbox = priv.priv0.p.sbox;
   if (return_store !== true) {
@@ -98,7 +95,7 @@ function from_asn1(data, return_store) {
   key1 = priv.attr && attr_parse(priv.attr);
   return {
     keys: key1 ? [key0, key1] : [key0],
-    format: "privkeys"
+    format: "privkeys",
   };
 }
 
@@ -175,7 +172,7 @@ class Priv {
 
     return {
       s: new Field(s.toArray(), "buf8", this.curve),
-      r: new Field(r.toArray(), "buf8", this.curve)
+      r: new Field(r.toArray(), "buf8", this.curve),
     };
   }
 
@@ -231,7 +228,7 @@ class Priv {
       iv: iv,
       wcek: wcek,
       data: ctext,
-      ukm: ukm
+      ukm: ukm,
     };
   }
 
@@ -327,13 +324,13 @@ class Priv {
         p: {
           p: {
             type: "params",
-            value: this.curve.as_struct()
+            value: this.curve.as_struct(),
           },
-          sbox: dstszi2010.DEFAULT_SBOX_COMPRESSED
-        }
+          sbox: dstszi2010.DEFAULT_SBOX_COMPRESSED,
+        },
       },
       param_d: Array.prototype.slice.call(this.d.buf8()).reverse(),
-      attr: []
+      attr: [],
     };
     return key;
   }
@@ -342,7 +339,7 @@ class Priv {
     const iv = random(Buffer.alloc(8));
     const salt = random(Buffer.alloc(32));
     return pbes2.enc_serialize(
-      algo.storesave(Buffer.from(this.to_asn1()), "PBES2", password, iv, salt)
+      algo.storesave(Buffer.from(this.to_asn1()), "PBES2", password, iv, salt),
     );
   }
 
@@ -367,7 +364,7 @@ class Priv {
     data = pem.maybe_pem(data);
     if (password) {
       stores = parseWithFn(data, [pbes2.pbes2_parse, pfx.pfx_parse, keystore.enc_parse_many]);
-      data = stores.map(part => algo.storeload(part, password));
+      data = stores.map((part) => algo.storeload(part, password));
     } else {
       data = [data];
     }
@@ -417,7 +414,7 @@ function guessStore(data) {
   } catch (certErr) {
     throw new Error(
       `Cant parse store as private key (${privErr.message}) ` +
-        `or as cert store (${certErr.message})`
+        `or as cert store (${certErr.message})`,
     );
   }
 }

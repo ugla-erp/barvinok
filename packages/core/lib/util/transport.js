@@ -20,19 +20,16 @@ function write_buf(buf, data) {
   invariant(Buffer.isBuffer(buf), "First argument should be buffer");
   invariant(
     Buffer.isBuffer(data) || typeof data === "string",
-    "Second argument should be buffer or string"
+    "Second argument should be buffer or string",
   );
 
-  return Buffer.concat([
-    buf,
-    typeof data === "string" ? Buffer.from(data, "binary") : data
-  ]);
+  return Buffer.concat([buf, typeof data === "string" ? Buffer.from(data, "binary") : data]);
 }
 
 function transport_header(rb, headers) {
   rb = write_buf(rb, "TRANSPORTABLE\u0000");
   let h_buf = Buffer.alloc(0);
-  Object.entries(headers).forEach(function([key, value]) {
+  Object.entries(headers).forEach(function ([key, value]) {
     h_buf = write_buf(h_buf, key);
     h_buf = write_buf(h_buf, "=");
     h_buf = write_buf(h_buf, value);
@@ -49,7 +46,7 @@ function transport_encode(documents, headers) {
 
   rb = headers ? transport_header(rb, headers) : rb;
 
-  documents.forEach(function(el) {
+  documents.forEach(function (el) {
     rb = write_buf(rb, el.type);
     rb = write_buf(rb, "\u0000");
     rb = write_buf(rb, U32(el.contents.length));
@@ -58,7 +55,7 @@ function transport_encode(documents, headers) {
   return rb;
 }
 
-var header_decode = function(buffer) {
+var header_decode = function (buffer) {
   var ret = {};
   var key, val;
   var idx = 0;
@@ -78,7 +75,7 @@ var header_decode = function(buffer) {
   return ret;
 };
 
-var qlb_split = function(buffer, print) {
+var qlb_split = function (buffer, print) {
   var off = 0;
   var ret = { data: [], hash: [] };
   var clen;
@@ -122,7 +119,7 @@ var qlb_split = function(buffer, print) {
   return ret;
 };
 
-var decode_packed_xml_contents = function(xmlBuf) {
+var decode_packed_xml_contents = function (xmlBuf) {
   var el, partName;
   var res = [];
   var rootElement, childElement;
@@ -153,7 +150,7 @@ var decode_packed_xml_contents = function(xmlBuf) {
   return res;
 };
 
-var transport_decode = function(buffer) {
+var transport_decode = function (buffer) {
   var ret = { docs: [] };
   var off = 0;
   var section = 0;
@@ -179,7 +176,7 @@ var transport_decode = function(buffer) {
           ret.docs.push({
             type: doc.name,
             contents: doc.content,
-            encoding: "PACKED_XML_DOCUMENT"
+            encoding: "PACKED_XML_DOCUMENT",
           });
         } else {
           ret.header[doc.name] = doc.content;
@@ -233,5 +230,5 @@ var transport_decode = function(buffer) {
 
 export default {
   encode: transport_encode,
-  decode: transport_decode
+  decode: transport_decode,
 };

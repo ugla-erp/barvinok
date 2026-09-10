@@ -1,5 +1,5 @@
 import { describe, it } from "vitest";
-import gost89 from "gost89";
+import gost89 from "barvinok-gost89";
 import assert from "assert";
 import * as jk from "../lib/index.js";
 import { loadPriv, loadCert, assertEqualSaved } from "./utils.js";
@@ -18,7 +18,7 @@ describe("Certificate", () => {
       const name = {
         organizationName: "Very Much CA",
         serialNumber: "UA-99999999",
-        localityName: "Wakanda"
+        localityName: "Wakanda",
       };
       const serial = 14799991119 << 12; // eslint-disable-line no-bitwise
       const cert = jk.Certificate.signCert({
@@ -30,8 +30,8 @@ describe("Certificate", () => {
           issuer: name,
           subject: name,
           valid: { from: 1500000000000, to: 1700000000000 },
-          usage: "\x03\x02\x06\xC0"
-        }
+          usage: "\x03\x02\x06\xC0",
+        },
       });
       const data = cert.as_asn1();
       assertEqualSaved(data, "SELF_SIGNED1.cer");
@@ -41,7 +41,7 @@ describe("Certificate", () => {
       const name = {
         organizationName: "Very Much CA",
         serialNumber: "UA-99999999",
-        localityName: "Wakanda"
+        localityName: "Wakanda",
       };
       const serial = 99991119 << 12; // eslint-disable-line no-bitwise
       const cert = jk.Certificate.signCert({
@@ -53,8 +53,8 @@ describe("Certificate", () => {
           issuer: name,
           subject: name,
           valid: { from: 1500000000000, to: 1700000000000 },
-          usage: "\x03\x02\x03\x08"
-        }
+          usage: "\x03\x02\x03\x08",
+        },
       });
       const data = cert.as_asn1();
       assertEqualSaved(data, "SELF_SIGNED_ENC_40A0.cer");
@@ -64,7 +64,7 @@ describe("Certificate", () => {
       const name = {
         organizationName: "Very Much CA",
         serialNumber: "UA-99999991",
-        localityName: "Wakanda"
+        localityName: "Wakanda",
       };
       const serial = 99991111 << 12; // eslint-disable-line no-bitwise
       const cert = jk.Certificate.signCert({
@@ -76,8 +76,8 @@ describe("Certificate", () => {
           issuer: name,
           subject: name,
           valid: { from: 1500000000000, to: 1700000000000 },
-          usage: "\x03\x02\x03\x08"
-        }
+          usage: "\x03\x02\x03\x08",
+        },
       });
       const data = cert.as_asn1();
       assertEqualSaved(data, "SELF_SIGNED_ENC_6929.cer");
@@ -87,7 +87,7 @@ describe("Certificate", () => {
       const name = {
         organizationName: "Very Much CA",
         serialNumber: "UA-99999999",
-        localityName: "Wakanda"
+        localityName: "Wakanda",
       };
       const serial = 14799991119 << 12; // eslint-disable-line no-bitwise
       const cert = jk.Certificate.signCert({
@@ -99,8 +99,8 @@ describe("Certificate", () => {
           issuer: name,
           subject: name,
           valid: { from: 1500000000000, to: 1700000000000 },
-          usage: "\x03\x02\x03\x08"
-        }
+          usage: "\x03\x02\x03\x08",
+        },
       });
       const data = cert.as_asn1();
       assertEqualSaved(data, "SELF_SIGNED_ENC_E54B.cer");
@@ -109,13 +109,7 @@ describe("Certificate", () => {
     it("should check that self-signed cert is valid", () => {
       const cert = loadCert("SELF_SIGNED1.cer");
 
-      assert.equal(
-        cert.verifySelfSigned(
-          { time: 1550000000000 },
-          { Dstu4145le: algo.hash }
-        ),
-        true
-      );
+      assert.equal(cert.verifySelfSigned({ time: 1550000000000 }, { Dstu4145le: algo.hash }), true);
     });
   });
 });

@@ -116,13 +116,4 @@ function strFromUtf8(ab) {
   return decodeURIComponent(escape(String.fromCharCode.apply(null, ab)));
 }
 
-export {
-  add_zero,
-  is_hex,
-  invert,
-  BIG_BE,
-  BIG_LE,
-  BIG_INVERT,
-  maybeHex,
-  strFromUtf8
-};
+export { add_zero, is_hex, invert, BIG_BE, BIG_LE, BIG_INVERT, maybeHex, strFromUtf8 };

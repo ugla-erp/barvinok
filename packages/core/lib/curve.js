@@ -1,5 +1,5 @@
 /* eslint-disable camelcase,no-underscore-dangle,no-bitwise */
-import asn1 from "asn1.js";
+import asn1 from "barvinok-asn1";
 
 import Field from "./field.js";
 import * as wnaf from "./wnaf/index.js";
@@ -87,7 +87,7 @@ export default class Curve {
       b: big(curve.param_b),
       order: util.BIG_BE(curve.order.toArray()),
       kofactor: [2],
-      base: big(curve.bp)
+      base: big(curve.bp),
     });
   }
 
@@ -171,7 +171,7 @@ export default class Curve {
     if (x.is_zero()) {
       return {
         x,
-        y: pb.mod_mul(pb)
+        y: pb.mod_mul(pb),
       };
     }
 
@@ -211,7 +211,7 @@ export default class Curve {
 
     return {
       x,
-      y
+      y,
     };
   }
 
@@ -227,13 +227,12 @@ export default class Curve {
     const big = new bn.BN(value.buf8(), 8);
     const mod = new bn.BN(1).shln(bits);
     const truncated = big.mod(mod);
-    return new Field(truncated.toArray(), 'buf8', this);
+    return new Field(truncated.toArray(), "buf8", this);
   }
 
   truncate(value) {
     return this.truncateTo(value, this.m);
   }
-
 
   /* Countermeasure against Minerva / TPM-FAIL timing-side-channel attacks.
    * wNAF multiplication leaks the scalar bit length through the number of
@@ -321,24 +320,24 @@ export default class Curve {
     if (this.ks.length === 1) {
       ks_p = {
         type: "trinominal",
-        value: this.ks[0]
+        value: this.ks[0],
       };
     } else {
       ks_p = this.ks;
       ks_p = {
         type: "pentanominal",
-        value: { k1: ks_p[0], k2: ks_p[1], k3: ks_p[2] }
+        value: { k1: ks_p[0], k2: ks_p[1], k3: ks_p[2] },
       };
     }
     return {
       p: {
         param_m: this.m,
-        ks: ks_p
+        ks: ks_p,
       },
       param_a: this.param_a.bytes[0],
       param_b: this.param_b.le(),
       order: new bn.BN(this.order.buf8(), 8),
-      bp: this.base.compress().le()
+      bp: this.base.compress().le(),
     };
   }
 
@@ -370,7 +369,7 @@ export default class Curve {
       257: 6,
       307: 7,
       367: 8,
-      431: 9
+      431: 9,
     }[this.m];
   }
 
@@ -385,7 +384,7 @@ export default class Curve {
       "DSTU_PB_257",
       "DSTU_PB_307",
       "DSTU_PB_367",
-      "DSTU_PB_431"
+      "DSTU_PB_431",
     ][this.curve_id()];
   }
 }
@@ -400,6 +399,6 @@ function pkey(curve_name, key_data, key_fmt) {
   return curve.pkey(key_data, key_fmt);
 }
 
-const std_curve = id => Curve.from_id(id);
+const std_curve = (id) => Curve.from_id(id);
 
 export { Curve, Field, pkey, pubkey, std_curve };

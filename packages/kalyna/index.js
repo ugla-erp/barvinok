@@ -1,2 +1,2 @@
-'use strict';
-module.exports = require('./dstu7624');
+"use strict";
+module.exports = require("./dstu7624");

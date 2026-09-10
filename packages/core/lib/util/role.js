@@ -1,7 +1,7 @@
 const DRFO_FORMAT = [
   /^[0-9]{10}$/, // standard DRFO code ten digits;
   /^[0-9]{9}$/, // id card (new passport) number nine digits used in lieu of DRFO code for religious people.
-  /^[a-zA-Z]{2}[0-9]{6}$/ // old passport number AA123456 used in lieu of DRFO code for religious people.
+  /^[a-zA-Z]{2}[0-9]{6}$/, // old passport number AA123456 used in lieu of DRFO code for religious people.
 ];
 function isNaturalPerson(code) {
   for (let format of DRFO_FORMAT) {
@@ -49,10 +49,7 @@ const filterRole = function filerRole(role, ob) {
     return ipn.EDRPOU === ipn.DRFO;
   }
   if (role === "director") {
-    return (
-      ipn.EDRPOU === ipn.DRFO ||
-      (ipn.DRFO && ipn.EDRPOU && !isNaturalPerson(ipn.EDRPOU))
-    );
+    return ipn.EDRPOU === ipn.DRFO || (ipn.DRFO && ipn.EDRPOU && !isNaturalPerson(ipn.EDRPOU));
   }
   if (role === "stamp") {
     return Boolean(ipn.EDRPOU && !ipn.DRFO);

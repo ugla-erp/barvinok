@@ -1,4 +1,4 @@
-import asn1 from "asn1.js";
+import asn1 from "barvinok-asn1";
 import * as dstszi2010 from "./dstszi2010.js";
 import * as rfc3280 from "./rfc3280.js";
 
@@ -9,55 +9,53 @@ const ContentInfo = dstszi2010.ContentInfo;
 
 var OID = {
   "1 2 840 113549 1 5 13": "PBES2",
-  "1 2 840 113549 1 5 12": "PBKDF2"
+  "1 2 840 113549 1 5 12": "PBKDF2",
 };
 
-var PBKDF2_params = asn1.define("PBKDF2-params", function() {
+var PBKDF2_params = asn1.define("PBKDF2-params", function () {
   this.seq().obj(
     this.key("salt").octstr(),
     this.key("cycles").int(),
-    this.key("keyLength")
-      .optional()
-      .int(),
-    this.key("hash").use(CipherParams)
+    this.key("keyLength").optional().int(),
+    this.key("hash").use(CipherParams),
   );
 });
 
-var PBES2_params = asn1.define("PBES2-params", function() {
+var PBES2_params = asn1.define("PBES2-params", function () {
   this.seq().obj(
     this.key("keyDerivationFunc")
       .seq()
       .obj(this.key("id").objid(OID), this.key("params").use(PBKDF2_params)),
-    this.key("encryptionScheme").use(CipherParams)
+    this.key("encryptionScheme").use(CipherParams),
   );
 });
 
-var PBES2Algorithms = asn1.define("PBES2Algorithms", function() {
+var PBES2Algorithms = asn1.define("PBES2Algorithms", function () {
   this.seq().obj(
     this.key("algorithm").objid(OID),
     this.key("parameters").choice({
       null_: this.null_(),
-      params: this.use(PBES2_params)
-    })
+      params: this.use(PBES2_params),
+    }),
   );
 });
 
-var PBES2 = asn1.define("StorePBES2", function() {
+var PBES2 = asn1.define("StorePBES2", function () {
   this.seq().obj(
     this.key("contentEncryptionAlgorithm").use(PBES2Algorithms),
-    this.key("encryptedContent").octstr()
+    this.key("encryptedContent").octstr(),
   );
 });
 
 Object.assign(ContentInfo.algoModel.IDS, OID);
 Object.assign(ContentInfo.algoModel, { PBES2: PBES2_params });
 
-var pbes2_parse = function(data) {
+var pbes2_parse = function (data) {
   const obj = PBES2.decode(data, "der");
   return [pbes2_parse_asn1(obj)];
 };
 
-var pbes2_parse_asn1 = function(asn1) {
+var pbes2_parse_asn1 = function (asn1) {
   var kdf, enc, params, iv, sbox, salt, iter;
 
   if (asn1.contentEncryptionAlgorithm.algorithm !== "PBES2") {
@@ -88,12 +86,7 @@ var pbes2_parse_asn1 = function(asn1) {
 
   if (iv.length !== 8 || sbox.length !== 64 || salt.length !== 32) {
     throw new Error(
-      "IV len: " +
-        iv.length +
-        ", S-BOX len: " +
-        sbox.length +
-        ", SALT len: " +
-        salt.length
+      "IV len: " + iv.length + ", S-BOX len: " + sbox.length + ", SALT len: " + salt.length,
     );
   }
   return {
@@ -102,11 +95,11 @@ var pbes2_parse_asn1 = function(asn1) {
     sbox: sbox,
     salt: salt,
     iters: iter.toNumber(),
-    body: asn1.encryptedContent
+    body: asn1.encryptedContent,
   };
 };
 
-var pbes2_serialize = function(store) {
+var pbes2_serialize = function (store) {
   return PBES2.encode(
     {
       contentEncryptionAlgorithm: {
@@ -123,10 +116,10 @@ var pbes2_serialize = function(store) {
                   algorithm: "Gost34311-hmac",
                   parameters: {
                     type: "null_",
-                    value: null
-                  }
-                }
-              }
+                    value: null,
+                  },
+                },
+              },
             },
             encryptionScheme: {
               algorithm: "Gost28147-cfb",
@@ -134,16 +127,16 @@ var pbes2_serialize = function(store) {
                 type: "params",
                 value: {
                   iv: store.iv,
-                  dke: store.sbox
-                }
-              }
-            }
-          }
-        }
+                  dke: store.sbox,
+                },
+              },
+            },
+          },
+        },
       },
-      encryptedContent: store.body
+      encryptedContent: store.body,
     },
-    "der"
+    "der",
   );
 };
 
@@ -151,9 +144,4 @@ PBES2.obj_parse = pbes2_parse_asn1;
 PBES2.pbes2_parse = pbes2_parse;
 
 export default PBES2;
-export {
-  OID,
-  pbes2_parse,
-  pbes2_serialize as enc_serialize,
-  pbes2_parse_asn1 as obj_parse
-};
+export { OID, pbes2_parse, pbes2_serialize as enc_serialize, pbes2_parse_asn1 as obj_parse };

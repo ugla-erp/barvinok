@@ -18,7 +18,7 @@ describe("guessStore diagnostics", () => {
     assert.throws(
       () => jk.Priv.from_protected(garbage),
       /version/,
-      "expected the private-key parse error to be part of the thrown message"
+      "expected the private-key parse error to be part of the thrown message",
     );
   });
 });

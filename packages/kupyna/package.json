@@ -1,11 +1,30 @@
 {
-  "name": "dstu7564",
-  "version": "1.1.1",
-  "description": "dstu7564 hash function implementation",
+  "name": "barvinok-kupyna",
+  "version": "0.1.0",
+  "description": "barvinok-kupyna hash function implementation",
   "main": "dstu7564.js",
   "scripts": {
-    "test": "test.js"
+    "test": "vitest run"
   },
   "author": "Illya Petrov <ilya.muromec@gmail.com>",
-  "license": "BSD-2-Clause"
+  "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ugla-erp/barvinok.git",
+    "directory": "packages/kupyna"
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "files": [
+    "bufferUtil.js",
+    "dstu7564.js",
+    "subrowcol.js",
+    "LICENSE",
+    "README.md"
+  ],
+  "exports": {
+    ".": "./dstu7564.js",
+    "./package.json": "./package.json"
+  }
 }

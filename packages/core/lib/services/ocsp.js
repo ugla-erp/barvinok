@@ -14,28 +14,28 @@ function requestCB(url, spec, nonce, query, cb) {
       tbsRequest: {
         requestList: [
           {
-            reqCert: spec
-          }
+            reqCert: spec,
+          },
         ],
         requestExtensions: [
           {
             extnID: "OCSPNonce",
-            extnValue: nonce
-          }
-        ]
-      }
+            extnValue: nonce,
+          },
+        ],
+      },
     },
-    "der"
+    "der",
   );
   return query(
     "POST",
     url,
     {
       "Content-Type": "application/ocsp-request",
-      "Content-Length": ocsp.length
+      "Content-Length": ocsp.length,
     },
     ocsp,
-    function(full, status) {
+    function (full, status) {
       if (status !== 200) {
         return cb(null);
       }
@@ -49,13 +49,13 @@ function requestCB(url, spec, nonce, query, cb) {
       } else {
         cb(null);
       }
-    }
+    },
   );
 }
 
 function request(...args) {
   return new Promise((resolve, reject) => {
-    requestCB(...args, ret => (ret ? resolve(ret) : reject(ret)));
+    requestCB(...args, (ret) => (ret ? resolve(ret) : reject(ret)));
   });
 }
 

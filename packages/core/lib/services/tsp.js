@@ -8,36 +8,34 @@ function getStampCb(cert, hashedMessage, query, cb, errorCb) {
       version: 1,
       messageImprint: {
         hashAlgorithm: {
-          algorithm: "Gost34311"
+          algorithm: "Gost34311",
         },
-        hashedMessage: hashedMessage
-      }
+        hashedMessage: hashedMessage,
+      },
     },
-    "der"
+    "der",
   );
   return query(
     "POST",
     cert.extension.subjectInfoAccess.link,
     {
       "Content-Type": "application/tsp-request",
-      "Content-Length": tsp.length
+      "Content-Length": tsp.length,
     },
     tsp,
-    function(full) {
+    function (full) {
       if (!full) return errorCb(null);
       var rtsp = rfc3161.TimeStampResp.decode(full, "der");
       if (rtsp.status.status !== "granted") {
         return errorCb(null);
       }
       cb(dstszi2010.ContentInfo.encode(rtsp.timeStampToken, "der"));
-    }
+    },
   );
 }
 
 function getStamp(cert, hashedMessage, query) {
-  return new Promise((resolve, reject) =>
-    getStampCb(cert, hashedMessage, query, resolve, reject)
-  );
+  return new Promise((resolve, reject) => getStampCb(cert, hashedMessage, query, resolve, reject));
 }
 
 export { getStamp };

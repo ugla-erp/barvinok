@@ -1,5 +1,5 @@
 import { describe, it } from "vitest";
-import gost89 from "gost89";
+import gost89 from "barvinok-gost89";
 import assert from "assert";
 import * as strutil from "../lib/util/str.js";
 import { loadAsset, loadCert, assertEqualSaved } from "./utils.js";
@@ -27,51 +27,32 @@ describe("Certificate", () => {
       assert.equal(cert.format, "x509");
       assert.equal(cert.curve.m, 257);
       assert.deepEqual(Array.from(cert.curve.mod_bits), [257, 12, 0]);
-      assert.deepEqual(Array.from(cert.pk_data), [
-        0x2c157a5f,
-        0x17857f3c,
-        0xee0ce4a5,
-        0xbf03a3b,
-        0xcb31f667,
-        0x71224a5,
-        0x31401ac,
-        0xcae8dae1,
-        0x1
-      ]);
+      assert.deepEqual(
+        Array.from(cert.pk_data),
+        [
+          0x2c157a5f, 0x17857f3c, 0xee0ce4a5, 0xbf03a3b, 0xcb31f667, 0x71224a5, 0x31401ac,
+          0xcae8dae1, 0x1,
+        ],
+      );
       assert.equal(cert.valid.from, 1478124000000); // UTCTime 2016-11-02 22:00:00 UTC
       assert.equal(cert.valid.to, 1541196000000); // UTCTime 2018-11-02 22:00:00 UTC
-      assert.equal(
-        cert.serial,
-        295234990915418097076372072606219913778474207744
-      );
+      assert.equal(cert.serial, 295234990915418097076372072606219913778474207744);
       assert.equal(cert.signatureAlgorithm, "Dstu4145le");
       assert.equal(cert.pubkeyAlgorithm, "Dstu4145le");
       assert.equal(cert.extension.ipn.DRFO, null);
       assert.equal(cert.extension.ipn.EDRPOU, "39292197");
 
-      assert.equal(
-        cert.subject.commonName,
-        "Державна фіскальна служба України.  ОТРИМАНО"
-      );
-      assert.equal(
-        cert.subject.organizationName,
-        "Державна фіскальна служба України"
-      );
+      assert.equal(cert.subject.commonName, "Державна фіскальна служба України.  ОТРИМАНО");
+      assert.equal(cert.subject.organizationName, "Державна фіскальна служба України");
       assert.equal(cert.subject.countryName, "UA");
       assert.equal(cert.subject.localityName, "Київ");
       assert.equal(cert.subject.serialNumber, "2122385");
 
-      assert.equal(
-        cert.issuer.commonName,
-        "Акредитований центр сертифікації ключів ІДД ДФС"
-      );
-      assert.equal(
-        cert.issuer.organizationName,
-        "Інформаційно-довідковий департамент ДФС"
-      );
+      assert.equal(cert.issuer.commonName, "Акредитований центр сертифікації ключів ІДД ДФС");
+      assert.equal(cert.issuer.organizationName, "Інформаційно-довідковий департамент ДФС");
       assert.equal(
         cert.issuer.organizationalUnitName,
-        "Управління (центр) сертифікації ключів ІДД ДФС"
+        "Управління (центр) сертифікації ключів ІДД ДФС",
       );
       assert.equal(cert.issuer.countryName, "UA");
       assert.equal(cert.issuer.localityName, "Київ");
@@ -85,33 +66,32 @@ describe("Certificate", () => {
         organizationName: "Державна фіскальна служба України",
         countryName: "UA",
         localityName: "Київ",
-        serialNumber: "2122385"
+        serialNumber: "2122385",
       });
       assert.deepEqual(info.issuer, {
         commonName: "Акредитований центр сертифікації ключів ІДД ДФС",
         organizationName: "Інформаційно-довідковий департамент ДФС",
-        organizationalUnitName:
-          "Управління (центр) сертифікації ключів ІДД ДФС",
+        organizationalUnitName: "Управління (центр) сертифікації ключів ІДД ДФС",
         countryName: "UA",
         localityName: "Київ",
-        serialNumber: "UA-39384476"
+        serialNumber: "UA-39384476",
       });
       assert.deepEqual(info.valid, {
         from: 1478124000000, // UTCTime 2016-11-02 22:00:00 UTC
-        to: 1541196000000 // UTCTime 2018-11-02 22:00:00 UTC
+        to: 1541196000000, // UTCTime 2018-11-02 22:00:00 UTC
       });
       assert.deepEqual(info.extension.ipn, {
-        EDRPOU: "39292197"
+        EDRPOU: "39292197",
       });
 
       assert.deepEqual(info.extension.subjectInfoAccess, {
         id: "tsp",
-        link: "http://acskidd.gov.ua/services/tsp/"
+        link: "http://acskidd.gov.ua/services/tsp/",
       });
       assert.deepEqual(info.extension.authorityInfoAccess, {
         id: "ocsp",
         issuers: "http://acskidd.gov.ua/download/certificates/allacskidd.p7b",
-        link: "http://acskidd.gov.ua/services/ocsp/"
+        link: "http://acskidd.gov.ua/services/ocsp/",
       });
       assert.deepEqual(info.usage, { sign: true, encrypt: false });
     });
@@ -124,10 +104,7 @@ describe("Certificate", () => {
     it("should serialize name to asn1", () => {
       const der = cert.name_asn1();
       const data = loadAsset("SFS_1.cer");
-      assert.deepEqual(
-        der.toString("hex"),
-        data.slice(50, 336 + 4 + 50).toString("hex")
-      );
+      assert.deepEqual(der.toString("hex"), data.slice(50, 336 + 4 + 50).toString("hex"));
     });
 
     it("should serialize (bypass cache) back", () => {
@@ -147,7 +124,7 @@ describe("Certificate", () => {
           "/commonName=Акредитований центр сертифікації ключів ІДД ДФС" +
           "/serialNumber=UA-39384476" +
           "/countryName=UA" +
-          "/localityName=Київ"
+          "/localityName=Київ",
       );
     });
   });
@@ -159,42 +136,29 @@ describe("Certificate", () => {
       assert.equal(cert.format, "x509");
       assert.equal(cert.curve.m, 257);
       assert.deepEqual(Array.from(cert.curve.mod_bits), [257, 12, 0]);
-      assert.deepEqual(Array.from(cert.pk_data), [
-        0xb59265f0,
-        0xaaf792b8,
-        0xdda16518,
-        0x286cb42b,
-        0x3e1be80f,
-        0x5751c3ac,
-        0xe579a40,
-        0x5002f847,
-        0x1
-      ]);
+      assert.deepEqual(
+        Array.from(cert.pk_data),
+        [
+          0xb59265f0, 0xaaf792b8, 0xdda16518, 0x286cb42b, 0x3e1be80f, 0x5751c3ac, 0xe579a40,
+          0x5002f847, 0x1,
+        ],
+      );
       assert.equal(cert.valid.from, 1450447200000); // 2015-12-18 14:00:00
       assert.equal(cert.valid.to, 1608300000000); // UTCTime 2018-11-02 22:00:00 UTC
-      assert.equal(
-        cert.serial,
-        274130962303897476041362771173503318330938753024
-      );
+      assert.equal(cert.serial, 274130962303897476041362771173503318330938753024);
       assert.equal(cert.signatureAlgorithm, "Dstu4145le");
       assert.equal(cert.pubkeyAlgorithm, "Dstu4145le");
       assert.equal(cert.extension.ipn, null);
 
       assert.equal(cert.subject.commonName, "АЦСК органів юстиції України");
       assert.equal(cert.subject.organizationName, 'ДП "НАІС"');
-      assert.equal(
-        cert.subject.organizationalUnitName,
-        "Акредитований центр сертифікації ключів"
-      );
+      assert.equal(cert.subject.organizationalUnitName, "Акредитований центр сертифікації ключів");
       assert.equal(cert.subject.countryName, "UA");
       assert.equal(cert.subject.localityName, "Київ");
       assert.equal(cert.subject.serialNumber, "UA-39787008-2015");
 
       assert.equal(cert.issuer.commonName, "Центральний засвідчувальний орган");
-      assert.equal(
-        cert.issuer.organizationName,
-        "Міністерство юстиції України"
-      );
+      assert.equal(cert.issuer.organizationName, "Міністерство юстиції України");
       assert.equal(cert.issuer.organizationalUnitName, "Адміністратор ІТС ЦЗО");
       assert.equal(cert.issuer.countryName, "UA");
       assert.equal(cert.issuer.localityName, "Київ");
@@ -216,7 +180,7 @@ describe("Certificate", () => {
           "/commonName=Центральний засвідчувальний орган" +
           "/serialNumber=UA-00015622-2012" +
           "/countryName=UA" +
-          "/localityName=Київ"
+          "/localityName=Київ",
       );
     });
 
@@ -234,7 +198,7 @@ describe("Certificate", () => {
           "/commonName=Центральний засвідчувальний орган" +
           "/serialNumber=UA-00015622-2012" +
           "/countryName=UA" +
-          "/localityName=Київ"
+          "/localityName=Київ",
       );
     });
   });
@@ -253,11 +217,11 @@ describe("Certificate", () => {
       assert.equal(
         cert.verifySelfSigned(
           {
-            time: 1556798940000
+            time: 1556798940000,
           },
-          { Dstu4145le: algo.hash }
+          { Dstu4145le: algo.hash },
         ),
-        true
+        true,
       );
     });
 
@@ -267,11 +231,11 @@ describe("Certificate", () => {
       assert.equal(
         temp.verifySelfSigned(
           {
-            time: 1556798940000
+            time: 1556798940000,
           },
-          { Dstu4145le: algo.hash }
+          { Dstu4145le: algo.hash },
         ),
-        false
+        false,
       );
     });
 
@@ -281,11 +245,40 @@ describe("Certificate", () => {
       assert.equal(
         temp.verifySelfSigned(
           {
-            time: 1556798940000
+            time: 1556798940000,
           },
-          { Dstu4145le: algo.hash }
+          { Dstu4145le: algo.hash },
         ),
-        false
+        false,
+      );
+    });
+
+    // REGRESSION. `verifySelfSigned` read
+    //
+    //     usage ? this.canUseFor(usage) : true && verifyTime && verifySignature && pubkey
+    //
+    // so passing `usage` returned canUseFor() ALONE — a tampered or expired certificate verified as
+    // long as its key usage bits allowed the operation. The sibling `verify()` ten lines above spells
+    // the same expression with the parentheses the author meant:
+    //
+    //     (usage ? this.canUseFor(usage) : true) && verifyTime && ...
+    //
+    // Nothing caught it because every other test here calls the method WITHOUT `usage`, which takes the
+    // other branch. This one passes it.
+    it("still checks the signature when a usage is named", () => {
+      const temp = loadCert("CZOROOT.cer");
+      temp.ob.tbsCertificate.issuer.value[0][0].value = Buffer.from("123");
+
+      assert.equal(
+        temp.verifySelfSigned({ time: 1556798940000, usage: "ca" }, { Dstu4145le: algo.hash }),
+        false,
+      );
+    });
+
+    it("still checks validity dates when a usage is named", () => {
+      assert.equal(
+        cert.verifySelfSigned({ time: 1700000000000, usage: "ca" }, { Dstu4145le: algo.hash }),
+        false,
       );
     });
 
@@ -293,11 +286,11 @@ describe("Certificate", () => {
       assert.equal(
         cert.verifySelfSigned(
           {
-            time: 1700000000000
+            time: 1700000000000,
           },
-          { Dstu4145le: algo.hash }
+          { Dstu4145le: algo.hash },
         ),
-        false
+        false,
       );
     });
 
@@ -305,11 +298,11 @@ describe("Certificate", () => {
       assert.equal(
         cert.verifySelfSigned(
           {
-            time: 1300000000000
+            time: 1300000000000,
           },
-          { Dstu4145le: algo.hash }
+          { Dstu4145le: algo.hash },
         ),
-        false
+        false,
       );
     });
   });

@@ -4,48 +4,33 @@ import lzmaDecoder from "js-lzma";
 import { Buffer } from "buffer";
 
 var Stream = {
-  inStream: function(data) {
+  inStream: function (data) {
     this.offset = 0;
     this.data = data;
-    this.readByte = function() {
+    this.readByte = function () {
       return this.data[this.offset++];
     };
-    this.readUInt32LE = function() {
+    this.readUInt32LE = function () {
       var res = this.data.readUInt32LE(this.offset);
       this.offset += 4;
       return res;
     };
     return this;
   },
-  outStream: function(size) {
+  outStream: function (size) {
     this.offset = 0;
     this.data = Buffer.alloc(size);
-    this.writeByte = function(value) {
+    this.writeByte = function (value) {
       this.data[this.offset++] = value;
     };
     return this;
-  }
+  },
 };
 
 function getVersion(data, dataLen) {
   var bytes = [0x31, 0x32, 0x33, 0x34, 0x35, 0x36, 0x37, 0x38, 0x39, 0x30];
   var xorStr = [
-    0x0e8,
-    0x0d5,
-    1,
-    3,
-    0x0c3,
-    0x0c1,
-    0x83,
-    0x3d,
-    0x0b7,
-    0x0f0,
-    0x41,
-    5,
-    7,
-    0x72,
-    0x10,
-    0x0e8
+    0x0e8, 0x0d5, 1, 3, 0x0c3, 0x0c1, 0x83, 0x3d, 0x0b7, 0x0f0, 0x41, 5, 7, 0x72, 0x10, 0x0e8,
   ];
 
   var res = { newFormat: false, nVer: -1, bRand: 0 };
@@ -56,10 +41,7 @@ function getVersion(data, dataLen) {
 
   // the magic happens here...
   for (var count = 0; count < 10; count++) {
-    if (
-      (data[dataLen - 13 + count] ^ data[dataLen - 23 + count]) !==
-      bytes[count]
-    ) {
+    if ((data[dataLen - 13 + count] ^ data[dataLen - 23 + count]) !== bytes[count]) {
       return res;
     }
   }

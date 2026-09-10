@@ -1,8 +1,8 @@
 // Dstu7564mac-256 KDF: PBKDF2 with KMAC as PRF, password null-padded to the hash size.
 // Uses dstu7564's keyed KMAC (dstu7564_kmac) so PAD(K) is digested once, not per iteration.
-'use strict';
+"use strict";
 
-const { dstu7564_kmac } = require('dstu7564');
+const { dstu7564_kmac } = require("barvinok-kupyna");
 
 function KupynaMac(password, salt, iters, bitMode) {
   const key = Buffer.alloc(bitMode);

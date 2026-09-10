@@ -1,4 +1,4 @@
-import asn1 from "asn1.js";
+import asn1 from "barvinok-asn1";
 import { Curve } from "../curve.js";
 
 import * as rfc3280 from "../spec/rfc3280.js";
@@ -11,13 +11,13 @@ import { b64_encode } from "../util/base64.js";
 const OID = {
   "1 2 804 2 1 1 1 11 1 4 1 1": "DRFO",
   "1 2 804 2 1 1 1 11 1 4 7 1": "DRFO",
-  "1 2 804 2 1 1 1 11 1 4 2 1": "EDRPOU"
+  "1 2 804 2 1 1 1 11 1 4 2 1": "EDRPOU",
 };
 
 const OID_LINK = {
   "1 3 6 1 5 5 7 48 1": "ocsp",
   "1 3 6 1 5 5 7 48 2": "issuers",
-  "1 3 6 1 5 5 7 48 3": "tsp"
+  "1 3 6 1 5 5 7 48 3": "tsp",
 };
 
 const IPN_VAL = asn1.define("IPN_VAL", function body_IPN_VAL() {
@@ -37,12 +37,7 @@ const UsageBits = asn1.define("USage", function body_Usage() {
 });
 
 const Link = asn1.define("Link", function body_LINK() {
-  this.seq().obj(
-    this.key("id").objid(OID_LINK),
-    this.key("link")
-      .implicit(6)
-      .ia5str()
-  );
+  this.seq().obj(this.key("id").objid(OID_LINK), this.key("link").implicit(6).ia5str());
 });
 
 const AIA = asn1.define("AIA", function body_AIA() {
@@ -52,15 +47,11 @@ const AIA = asn1.define("AIA", function body_AIA() {
 const KeyId = asn1.define("KeyId", function body_KeyId() {
   this.choice({
     str: this.octstr(),
-    seq: this.seq().obj(
-      this.key("str")
-        .implicit(0)
-        .octstr()
-    )
+    seq: this.seq().obj(this.key("str").implicit(0).octstr()),
   });
 });
 
-const CertificateList = asn1.define("CertificateValues", function() {
+const CertificateList = asn1.define("CertificateValues", function () {
   this.seqof(rfc3280.Certificate);
 });
 
@@ -101,7 +92,7 @@ function parse_ipn(data) {
 }
 
 function optional(fn) {
-  return function(data) {
+  return function (data) {
     return data ? fn(data) : null;
   };
 }
@@ -119,7 +110,7 @@ function parse_ext(asn_ob) {
     authorityInfoAccess: optional(parse_aia)(ext.authorityInfoAccess),
     subjectInfoAccess: optional(parse_aia)(ext.subjectInfoAccess),
     subjectKeyIdentifier: optional(parseKeyId)(ext.subjectKeyIdentifier),
-    authorityKeyIdentifier: optional(parseKeyId)(ext.authorityKeyIdentifier)
+    authorityKeyIdentifier: optional(parseKeyId)(ext.authorityKeyIdentifier),
   };
 }
 
@@ -147,8 +138,8 @@ function makeRDN(obj) {
   return {
     type: "rdn",
     value: Object.entries(obj).map(([type, value]) => [
-      { type, value: strutil.encodeUtf8Str(value, "der") }
-    ])
+      { type, value: strutil.encodeUtf8Str(value, "der") },
+    ]),
   };
 }
 
@@ -177,7 +168,7 @@ class Certificate {
     subject,
     valid,
     usage,
-    hash
+    hash,
   }) {
     return {
       version: "v3",
@@ -186,38 +177,38 @@ class Certificate {
       subject: makeRDN(subject),
       subjectPublicKeyInfo: {
         subjectPublicKey: {
-          data: pubkey.serialize()
+          data: pubkey.serialize(),
         },
         algorithm: {
           algorithm,
           parameters: {
             curve: { type: "id", value: curve },
-            dke: sbox
-          }
-        }
+            dke: sbox,
+          },
+        },
       },
       validity: {
         notBefore: { type: "utcTime", value: valid.from },
-        notAfter: { type: "utcTime", value: valid.to }
+        notAfter: { type: "utcTime", value: valid.to },
       },
       extensions: [
         {
           extnID: "subjectKeyIdentifier",
-          extnValue: str(pubkey.keyid({ hash }))
+          extnValue: str(pubkey.keyid({ hash })),
         },
         {
           extnID: "authorityKeyIdentifier",
-          extnValue: str(pubkey.keyid({ hash }))
+          extnValue: str(pubkey.keyid({ hash })),
         },
         {
           extnID: "keyUsage",
           extnValue: Buffer.from(usage, "binary"),
-          critical: true
-        }
+          critical: true,
+        },
       ],
       signature: {
-        algorithm
-      }
+        algorithm,
+      },
     };
   }
 
@@ -230,27 +221,27 @@ class Certificate {
           curve: privkey.curve.name(),
           sbox: privkey.sbox,
           hash,
-          pubkey: privkey.pub()
+          pubkey: privkey.pub(),
         },
-        certData
-      )
+        certData,
+      ),
     );
     return new Certificate({
       tbsCertificate: tbs,
       signatureAlgorithm: {
-        algorithm: privkey.algorithm
+        algorithm: privkey.algorithm,
       },
       signature: {
         unused: 0,
-        data: str(privkey.sign(hash(Certificate.encodeTBS(tbs)), "le"))
-      }
+        data: str(privkey.sign(hash(Certificate.encodeTBS(tbs)), "le")),
+      },
     });
   }
 
   static formatDN(rdnlist) {
     const part = [];
-    rdnlist.forEach(elements => {
-      elements.forEach(el => {
+    rdnlist.forEach((elements) => {
+      elements.forEach((el) => {
         part.push(`${el.type}=${reprstr(el.value)}`);
       });
     });
@@ -264,8 +255,11 @@ class Certificate {
 
   static List = {
     toCades(list) {
-      return CertificateList.encode(list.map(iter => iter.ob), "der");
-    }
+      return CertificateList.encode(
+        list.map((iter) => iter.ob),
+        "der",
+      );
+    },
   };
 
   constructor(cert, lazy) {
@@ -286,17 +280,15 @@ class Certificate {
       pk.algorithm.algorithm === "Dstu4145le"
         ? Curve.resolve(pk.algorithm.parameters.curve, "cert")
         : null;
-    this.curve_id =
-      pk.algorithm.algorithm === "ECDSA" ? pk.algorithm.parameters.value : null;
+    this.curve_id = pk.algorithm.algorithm === "ECDSA" ? pk.algorithm.parameters.value : null;
     this.pk_data = util.BIG_LE(pk_data);
     this.valid = {
       from: tbs.validity.notBefore.value,
-      to: tbs.validity.notAfter.value
+      to: tbs.validity.notAfter.value,
     };
     this.serial = cert.tbsCertificate.serialNumber;
     this.signatureAlgorithm = cert.signatureAlgorithm.algorithm;
-    this.pubkeyAlgorithm =
-      cert.tbsCertificate.subjectPublicKeyInfo.algorithm.algorithm;
+    this.pubkeyAlgorithm = cert.tbsCertificate.subjectPublicKeyInfo.algorithm.algorithm;
     this.extension = parse_ext(cert.tbsCertificate.extensions);
     this.issuer = parse_dn(cert.tbsCertificate.issuer.value);
     this.subject = parse_dn(cert.tbsCertificate.subject.value);
@@ -312,35 +304,26 @@ class Certificate {
       issuer &&
       (issuer.isRoot()
         ? issuer.trusted && issuer.verifySelfSigned({ time }, hashes)
-        : issuer.verify(
-            { time: this.valid.from, usage: "ca" },
-            hashes,
-            lookupFn
-          )) &&
+        : issuer.verify({ time: this.valid.from, usage: "ca" }, hashes, lookupFn)) &&
       (usage ? this.canUseFor(usage) : true) &&
       this.verifyTime(Number(time)) &&
       this.verifySignature(issuer.pubkey_unpack(), hashes) &&
-      this.extension.authorityKeyIdentifier.equals(
-        issuer.extension.subjectKeyIdentifier
-      ) &&
-      this.extension.subjectKeyIdentifier.equals(
-        this.pubkey.keyid({ hash: hashes.Dstu4145le })
-      )
+      this.extension.authorityKeyIdentifier.equals(issuer.extension.subjectKeyIdentifier) &&
+      this.extension.subjectKeyIdentifier.equals(this.pubkey.keyid({ hash: hashes.Dstu4145le }))
     );
   }
 
   verifySelfSigned({ time, usage }, hashes) {
-    return usage
-      ? this.canUseFor(usage)
-      : true &&
-          this.verifyTime(time) &&
-          this.verifySignature(this.pubkey_unpack(), hashes) &&
-          this.pubkey
-            .keyid({ hash: hashes.Dstu4145le })
-            .equals(this.extension.subjectKeyIdentifier) &&
-          this.extension.authorityKeyIdentifier.equals(
-            this.extension.subjectKeyIdentifier
-          );
+    // The parentheses are load-bearing. Without them the ternary swallows the whole conjunction and a
+    // named `usage` returns canUseFor() alone — no signature check, no validity dates. Spelled the way
+    // `verify()` above spells the identical expression.
+    return (
+      (usage ? this.canUseFor(usage) : true) &&
+      this.verifyTime(time) &&
+      this.verifySignature(this.pubkey_unpack(), hashes) &&
+      this.pubkey.keyid({ hash: hashes.Dstu4145le }).equals(this.extension.subjectKeyIdentifier) &&
+      this.extension.authorityKeyIdentifier.equals(this.extension.subjectKeyIdentifier)
+    );
   }
 
   verifyTime(time) {
@@ -384,7 +367,7 @@ class Certificate {
   as_pem() {
     return `-----BEGIN CERTIFICATE-----\n${b64_encode(this.to_asn1(), {
       line: 16,
-      pad: true
+      pad: true,
     })}\n-----END CERTIFICATE-----`;
   }
 
@@ -401,32 +384,28 @@ class Certificate {
         ipn: x.extension.ipn,
         authorityInfoAccess: x.extension.authorityInfoAccess,
         subjectInfoAccess: x.extension.subjectInfoAccess,
-        subjectKeyIdentifier: optional(as_hex)(
-          x.extension.subjectKeyIdentifier
-        ),
-        authorityKeyIdentifier: optional(as_hex)(
-          x.extension.authorityKeyIdentifier
-        )
+        subjectKeyIdentifier: optional(as_hex)(x.extension.subjectKeyIdentifier),
+        authorityKeyIdentifier: optional(as_hex)(x.extension.authorityKeyIdentifier),
       },
       usage: {
         sign: this.canUseFor("sign"),
-        encrypt: this.canUseFor("encrypt")
+        encrypt: this.canUseFor("encrypt"),
       },
-      valid: x.valid
+      valid: x.valid,
     };
   }
 
   nameSerial() {
     return {
       issuer: this.ob.tbsCertificate.issuer,
-      serialNumber: this.ob.tbsCertificate.serialNumber
+      serialNumber: this.ob.tbsCertificate.serialNumber,
     };
   }
 
   rdnSerial() {
     return Certificate.formatRDN(
       this.ob.tbsCertificate.serialNumber,
-      this.ob.tbsCertificate.issuer.value
+      this.ob.tbsCertificate.issuer.value,
     );
   }
 
@@ -457,7 +436,7 @@ class Certificate {
     }
     const usage = {
       sign: 0x80,
-      encrypt: 0x08
+      encrypt: 0x08,
     };
     if (usage.hasOwnProperty(op)) {
       const bits = UsageBits.decode(keyUsage, "der");

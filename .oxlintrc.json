@@ -1,0 +1,23 @@
+{
+  "$schema": "./node_modules/oxlint/configuration_schema.json",
+  "categories": {
+    "correctness": "error"
+  },
+  "overrides": [
+    {
+      "files": ["packages/{core,algos,gost89,kupyna,kalyna,keystore}/**/*.js"],
+      "rules": {
+        "eslint/no-unused-vars": "warn",
+        "eslint/no-undef": "warn",
+        "eslint/no-useless-escape": "warn",
+        "eslint/no-loss-of-precision": "warn",
+        "eslint/no-unused-expressions": "warn",
+        "eslint/no-constant-binary-expression": "warn",
+        "eslint/no-unassigned-vars": "warn",
+        "unicorn/no-new-array": "warn",
+        "unicorn/prefer-string-starts-ends-with": "warn"
+      }
+    }
+  ],
+  "ignorePatterns": ["packages/asn1/**", "**/dist/**", "**/coverage/**"]
+}

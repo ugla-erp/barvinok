@@ -1,14 +1,14 @@
 {
-  "name": "dstucrypt-algos",
-  "version": "1.0.1",
-  "description": "Combined DSTU algorithm dispatcher for jkurwa (gost89 + dstu7564 + dstu7624)",
+  "name": "barvinok-algos",
+  "version": "0.1.0",
+  "description": "Combined DSTU algorithm dispatcher for barvinok (barvinok-gost89 + barvinok-kupyna + barvinok-kalyna)",
   "main": "index.js",
   "scripts": {
-    "test": "node test/test.js"
+    "test": "vitest run"
   },
   "keywords": [
     "dstucrypt",
-    "jkurwa",
+    "barvinok",
     "gost89",
     "dstu7564",
     "kupyna",
@@ -16,10 +16,29 @@
     "kalyna"
   ],
   "author": "Ilya Petrov <ilya.muromec@gmail.com>",
-  "license": "BSD",
+  "license": "Apache-2.0",
   "dependencies": {
-    "gost89": "^0.1.11",
-    "dstu7564": "^1.1.0",
-    "dstu7624": "^1.0.0"
+    "barvinok-gost89": "0.1.0",
+    "barvinok-kupyna": "0.1.0",
+    "barvinok-kalyna": "0.1.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ugla-erp/barvinok.git",
+    "directory": "packages/algos"
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "files": [
+    "index.js",
+    "kmac.js",
+    "storeload.js",
+    "LICENSE",
+    "README.md"
+  ],
+  "exports": {
+    ".": "./index.js",
+    "./package.json": "./package.json"
   }
 }

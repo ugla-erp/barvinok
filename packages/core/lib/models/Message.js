@@ -91,7 +91,7 @@ class SignedAttrs extends Attrs {
   set signingCertificateV2(value) {
     this.setAttr(
       "signingCertificateV2",
-      certid.SigningCertificateV2.wrap(value.cert.ob, value.hash)
+      certid.SigningCertificateV2.wrap(value.cert.ob, value.hash),
     );
   }
 
@@ -167,7 +167,7 @@ class Message {
   constructData(ob) {
     const wrap = {
       contentType: ob.type,
-      content: ob.data
+      content: ob.data,
     };
     this.wrap = wrap;
   }
@@ -182,25 +182,25 @@ class Message {
       version: 3,
       originator: {
         type: "issuerAndSerialNumber",
-        value: cert.nameSerial()
+        value: cert.nameSerial(),
       },
       ukm: enc.ukm,
       keyEncryptionAlgorithm: {
         algorithm: "dhSinglePass-cofactorDH-gost34311kdf",
         parameters: {
           algorithm: "Gost28147-cfb-wrap",
-          parameters: null
-        }
+          parameters: null,
+        },
       },
       recipientEncryptedKeys: [
         {
           rid: {
             type: "issuerAndSerialNumber",
-            value: ob.toCert.nameSerial()
+            value: ob.toCert.nameSerial(),
           },
-          encryptedKey: enc.wcek
-        }
-      ]
+          encryptedKey: enc.wcek,
+        },
+      ],
     };
 
     const wrap = {
@@ -210,8 +210,8 @@ class Message {
         recipientInfos: [
           {
             type: "kari",
-            value: kari
-          }
+            value: kari,
+          },
         ],
         encryptedContentInfo: {
           contentType: "data",
@@ -222,12 +222,12 @@ class Message {
               type: "params",
               value: {
                 iv: enc.iv,
-                dke
-              }
-            }
-          }
-        }
-      }
+                dke,
+              },
+            },
+          },
+        },
+      },
     };
     this.wrap = wrap;
   }
@@ -242,23 +242,21 @@ class Message {
       content: {
         version: 1,
         digestAlgorithms: [{ algorithm: "Gost34311" }],
-        contentInfo: ob.data
-          ? { contentType: "data", content: ob.data }
-          : { contentType: "data" },
+        contentInfo: ob.data ? { contentType: "data", content: ob.data } : { contentType: "data" },
         certificate: [ob.cert.ob],
         signerInfos: [
           {
             version: 1,
             sid: {
               type: "issuerAndSerialNumber",
-              value: ob.cert.nameSerial()
+              value: ob.cert.nameSerial(),
             },
             digestAlgorithm: { algorithm: "Gost34311" },
             digestEncryptionAlgorithm: { algorithm: "Dstu4145le" },
-            encryptedDigest: signB
-          }
-        ]
-      }
+            encryptedDigest: signB,
+          },
+        ],
+      },
     };
     this.wrap = wrap;
     this.attrs = [];
@@ -266,7 +264,7 @@ class Message {
     this.parseAttrs();
     this.pattrs.signingCertificateV2 = {
       cert: ob.cert,
-      hash: ob.hash(ob.cert.as_asn1())
+      hash: ob.hash(ob.cert.as_asn1()),
     };
     this.pattrs.contentType = "data";
     this.pattrs.messageDigest = digestB;
@@ -274,9 +272,7 @@ class Message {
       this.pattrs.contentTimeStamp = tspB;
     }
     this.pattrs.signingTime =
-      ob.signTime === undefined
-        ? new Date(Date.now())
-        : new Date(1000 * ob.signTime);
+      ob.signTime === undefined ? new Date(Date.now()) : new Date(1000 * ob.signTime);
     this.saveAttrs();
 
     if (!signB) {
@@ -395,7 +391,7 @@ class Message {
           hash_f,
           lookupCert,
           lookupCA,
-          "content"
+          "content",
         );
     }
     if (useSignatureTsp(opts.tsp)) {
@@ -406,7 +402,7 @@ class Message {
           hash_f,
           lookupCert,
           lookupCA,
-          "signature"
+          "signature",
         );
     }
 
@@ -441,11 +437,7 @@ class Message {
     const token = rfc3161.TSTInfo.decode(msg.content, "der");
     const signerValid = msg
       .signer(lookupCert)
-      .verify(
-        { time: token.genTime, usage: "timeStamping" },
-        { Dstu4145le: hash_f },
-        lookupCA
-      );
+      .verify({ time: token.genTime, usage: "timeStamping" }, { Dstu4145le: hash_f }, lookupCA);
     if (!signerValid) {
       return false;
     }
@@ -470,16 +462,16 @@ class Message {
 
   get signedWithCerts() {
     const tokens = [this.pattrs.contentTimeStamp, this.puattrs.timeStampToken]
-      .filter(msg => msg)
-      .map(msg => msg.signedWithCerts);
+      .filter((msg) => msg)
+      .map((msg) => msg.signedWithCerts);
     return [this.signerRDN].concat(...tokens);
   }
 
   get signerRDN() {
     const [
       {
-        sid: { type, value }
-      }
+        sid: { type, value },
+      },
     ] = this.info.signerInfos;
     if (type === "issuerAndSerialNumber") {
       return value;
@@ -565,7 +557,7 @@ class Message {
     const p = {
       ukm: this.info.recipientInfos[0].value.ukm,
       iv: enc_param.iv,
-      wcek: rp.encryptedKey
+      wcek: rp.encryptedKey,
     };
     return crypter.decrypt(enc.encryptedContent, pubkey, p, algo);
   }

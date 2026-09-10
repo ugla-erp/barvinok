@@ -1,6 +1,6 @@
-import asn1 from "asn1.js";
+import asn1 from "barvinok-asn1";
 
-var CRLReason = asn1.define("CRLReason", function() {
+var CRLReason = asn1.define("CRLReason", function () {
   this.enum({
     0: "unspecified",
     1: "keyCompromise",
@@ -11,7 +11,7 @@ var CRLReason = asn1.define("CRLReason", function() {
     6: "certificateHold",
     8: "removeFromCRL",
     9: "privilegeWithdrawn",
-    10: "AACompromise"
+    10: "AACompromise",
   });
 });
 export { CRLReason };
@@ -24,35 +24,30 @@ var ALGORITHMS_IDS = {
   "1 2 804 2 1 1 1 1 1 2": "Gost34311-hmac",
   "1 2 804 2 1 1 1 1 3 1 1": "Dstu4145le",
   "1 2 840 10045 2 1": "ECDSA",
-  "1 2 840 10045 4 3 2": "ECDSA-SHA256"
+  "1 2 840 10045 4 3 2": "ECDSA-SHA256",
 };
 export { ALGORITHMS_IDS };
 
-var AlgorithmIdentifier = asn1.define("AlgorithmIdentifier", function() {
+var AlgorithmIdentifier = asn1.define("AlgorithmIdentifier", function () {
   this.seq().obj(
     this.key("algorithm").objid(ALGORITHMS_IDS),
-    this.key("parameters")
-      .optional()
-      .any()
+    this.key("parameters").optional().any(),
   );
 });
 export { AlgorithmIdentifier };
 
-var Certificate = asn1.define("Certificate", function() {
+var Certificate = asn1.define("Certificate", function () {
   this.seq().obj(
     this.key("tbsCertificate").use(TBSCertificate),
     this.key("signatureAlgorithm").use(AlgorithmIdentifier),
-    this.key("signature").bitstr()
+    this.key("signature").bitstr(),
   );
 });
 export { Certificate };
 
-var TBSCertificate = asn1.define("TBSCertificate", function() {
+var TBSCertificate = asn1.define("TBSCertificate", function () {
   this.seq().obj(
-    this.key("version")
-      .def("v1")
-      .explicit(0)
-      .use(Version),
+    this.key("version").def("v1").explicit(0).use(Version),
     this.key("serialNumber").use(CertificateSerialNumber),
     this.key("signature").use(AlgorithmIdentifier),
     this.key("issuer").use(Name),
@@ -61,90 +56,72 @@ var TBSCertificate = asn1.define("TBSCertificate", function() {
     this.key("subjectPublicKeyInfo").use(SubjectPublicKeyInfo),
 
     // TODO(indutny): validate that version is v2 or v3
-    this.key("issuerUniqueID")
-      .optional()
-      .implicit(1)
-      .use(UniqueIdentifier),
-    this.key("subjectUniqueID")
-      .optional()
-      .implicit(2)
-      .use(UniqueIdentifier),
+    this.key("issuerUniqueID").optional().implicit(1).use(UniqueIdentifier),
+    this.key("subjectUniqueID").optional().implicit(2).use(UniqueIdentifier),
 
     // TODO(indutny): validate that version is v3
-    this.key("extensions")
-      .optional()
-      .explicit(3)
-      .use(Extensions)
+    this.key("extensions").optional().explicit(3).use(Extensions),
   );
 });
 export { TBSCertificate };
 
-var Version = asn1.define("Version", function() {
+var Version = asn1.define("Version", function () {
   this.int({
     0: "v1",
     1: "v2",
-    2: "v3"
+    2: "v3",
   });
 });
 export { Version };
 
-var CertificateSerialNumber = asn1.define(
-  "CertificateSerialNumber",
-  function() {
-    this.int();
-  }
-);
+var CertificateSerialNumber = asn1.define("CertificateSerialNumber", function () {
+  this.int();
+});
 export { CertificateSerialNumber };
 
-var Validity = asn1.define("Validity", function() {
-  this.seq().obj(
-    this.key("notBefore").use(Time),
-    this.key("notAfter").use(Time)
-  );
+var Validity = asn1.define("Validity", function () {
+  this.seq().obj(this.key("notBefore").use(Time), this.key("notAfter").use(Time));
 });
 export { Validity };
 
-var Time = asn1.define("Time", function() {
+var Time = asn1.define("Time", function () {
   this.choice({
     utcTime: this.utctime(),
-    genTime: this.gentime()
+    genTime: this.gentime(),
   });
 });
 export { Time };
 
-var UniqueIdentifier = asn1.define("UniqueIdentifier", function() {
+var UniqueIdentifier = asn1.define("UniqueIdentifier", function () {
   this.bitstr();
 });
 export { UniqueIdentifier };
 
-var AnyAlgorithmParams = asn1.define("AlgorithmParams", function() {
+var AnyAlgorithmParams = asn1.define("AlgorithmParams", function () {
   this.any();
 });
 
 var PUBKEY_PARAMS = {
-  any: AnyAlgorithmParams
+  any: AnyAlgorithmParams,
 };
-var PubkeyAlgorithmIdentifier = asn1.define(
-  "PubkeyAlgorithmIdentifier",
-  function() {
-    this.seq().obj(
-      this.key("algorithm").objid(ALGORITHMS_IDS),
-      this.key("parameters").use(function(obj) {
-        return PUBKEY_PARAMS[obj.algorithm] || PUBKEY_PARAMS.any;
-      })
-    );
-  }
-);
+var PubkeyAlgorithmIdentifier = asn1.define("PubkeyAlgorithmIdentifier", function () {
+  this.seq().obj(
+    this.key("algorithm").objid(ALGORITHMS_IDS),
+    this.key("parameters").use(function (obj) {
+      return PUBKEY_PARAMS[obj.algorithm] || PUBKEY_PARAMS.any;
+    }),
+  );
+});
 
-var SubjectPublicKeyInfo = asn1.define("SubjectPublicKeyInfo", function() {
+var SubjectPublicKeyInfo = asn1.define("SubjectPublicKeyInfo", function () {
   this.seq().obj(
     this.key("algorithm").use(PubkeyAlgorithmIdentifier),
-    this.key("subjectPublicKey").bitstr()
+    this.key("subjectPublicKey").bitstr(),
   );
 });
 export { SubjectPublicKeyInfo };
 
-var Extensions = asn1.define("Extensions", function() {
+var Extensions = asn1.define("Extensions", function () {
   this.seqof(Extension);
 });
 export { Extensions };
@@ -187,16 +164,14 @@ var extnIdMap = {
   "2 5 29 54": "inhibitAnyPolicy",
   "2 5 29 55": "targetInformation",
   "2 5 29 56": "noRevAvail",
-  "1 3 6 1 5 5 7 48 1 2": "OCSPNonce"
+  "1 3 6 1 5 5 7 48 1 2": "OCSPNonce",
 };
 
-var Extension = asn1.define("Extension", function() {
+var Extension = asn1.define("Extension", function () {
   this.seq().obj(
     this.key("extnID").objid(extnIdMap),
-    this.key("critical")
-      .bool()
-      .def(false),
-    this.key("extnValue").octstr()
+    this.key("critical").bool().def(false),
+    this.key("extnValue").octstr(),
   );
 });
 export { Extension };
@@ -207,31 +182,25 @@ export { Extension };
       rdnSequence  RDNSequence }
 
 */
-var Name = asn1.define("Name", function() {
+var Name = asn1.define("Name", function () {
   this.choice({
-    rdn: this.use(RDNSequence)
+    rdn: this.use(RDNSequence),
   });
 });
 export { Name };
 
-var RDNSequence = asn1.define("RDNSequence", function() {
+var RDNSequence = asn1.define("RDNSequence", function () {
   this.seqof(RelativeDistinguishedName);
 });
 export { RDNSequence };
 
-var RelativeDistinguishedName = asn1.define(
-  "RelativeDistinguishedName",
-  function() {
-    this.setof(AttributeTypeAndValue);
-  }
-);
+var RelativeDistinguishedName = asn1.define("RelativeDistinguishedName", function () {
+  this.setof(AttributeTypeAndValue);
+});
 export { RelativeDistinguishedName };
 
-var AttributeTypeAndValue = asn1.define("AttributeTypeAndValue", function() {
-  this.seq().obj(
-    this.key("type").use(AttributeType),
-    this.key("value").use(AttributeValue)
-  );
+var AttributeTypeAndValue = asn1.define("AttributeTypeAndValue", function () {
+  this.seq().obj(this.key("type").use(AttributeType), this.key("value").use(AttributeValue));
 });
 export { AttributeTypeAndValue };
 
@@ -300,40 +269,33 @@ var AttributeObjId = {
   "2 5 4 54": "dmdName",
   "2 5 4 65": "pseudonym",
   "2 5 4 72": "role",
-  "2 5 4 97": "organizationIdentifier"
+  "2 5 4 97": "organizationIdentifier",
 };
-var AttributeType = asn1.define("AttributeType", function() {
+var AttributeType = asn1.define("AttributeType", function () {
   this.objid(AttributeObjId);
 });
 export { AttributeType };
 
-var AttributeValue = asn1.define("AttributeValue", function() {
+var AttributeValue = asn1.define("AttributeValue", function () {
   this.any();
 });
 export { AttributeValue };
 
 var KeyPurposeIdMap = {
   "1 3 6 1 5 5 7 3 8": "timeStamping",
-  "1 3 6 1 5 5 7 3 9": "ocspSigning"
+  "1 3 6 1 5 5 7 3 9": "ocspSigning",
 };
-var KeyPurposeId = asn1.define("KeyPurposeId", function() {
+var KeyPurposeId = asn1.define("KeyPurposeId", function () {
   this.objid(KeyPurposeIdMap);
 });
 
-var ExtKeyUsageSyntax = asn1.define("ExtKeyUsageSyntax", function() {
+var ExtKeyUsageSyntax = asn1.define("ExtKeyUsageSyntax", function () {
   this.seqof(KeyPurposeId);
 });
 export { ExtKeyUsageSyntax };
 
-var BasicConstraints = asn1.define("BasicConstraints", function() {
-  this.seq().obj(
-    this.key("cA")
-      .bool()
-      .def(false),
-    this.key("pathLenConstraint")
-      .int()
-      .optional()
-  );
+var BasicConstraints = asn1.define("BasicConstraints", function () {
+  this.seq().obj(this.key("cA").bool().def(false), this.key("pathLenConstraint").int().optional());
 });
 export { BasicConstraints };
 

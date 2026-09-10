@@ -1,6 +1,6 @@
 {
-  "name": "jkurwa",
-  "version": "1.22.9",
+  "name": "barvinok",
+  "version": "0.1.0",
   "description": "Ukrainian national EC cryptography (DSTU-4145) implementaion",
   "type": "module",
   "main": "dist/index.cjs",
@@ -9,12 +9,12 @@
   },
   "scripts": {
     "test": "vitest run",
-    "cover": "npm run test -- --coverage",
-    "build": "tsdown lib/index.js -f cjs -f esm --clean --platform node --target es2015 --deps.never-bundle asn1.js --deps.never-bundle js-lzma --deps.never-bundle jksreader --deps.never-bundle gost89 --deps.never-bundle bn.js --deps.never-bundle buffer"
+    "build": "tsdown lib/index.js -f cjs -f esm --clean --platform node --target es2015 --deps.never-bundle barvinok-asn1 --deps.never-bundle js-lzma --deps.never-bundle barvinok-keystore --deps.never-bundle barvinok-gost89 --deps.never-bundle bn.js --deps.never-bundle buffer"
   },
   "repository": {
     "type": "git",
-    "url": "git@github.com:dstucrypt/jkurwa"
+    "url": "git+https://github.com/ugla-erp/barvinok.git",
+    "directory": "packages/core"
   },
   "keywords": [
     "ecc",
@@ -23,35 +23,21 @@
     "ukraine"
   ],
   "author": "Ilya Petrov",
-  "license": "BSD",
+  "license": "Apache-2.0",
   "bugs": {
-    "url": "https://github.com/dstucrypt/jkurwa/issues"
+    "url": "https://github.com/ugla-erp/barvinok/issues"
   },
-  "homepage": "https://github.com/dstucrypt/jkurwa/",
+  "homepage": "https://github.com/ugla-erp/barvinok/tree/main/packages/core#readme",
   "devDependencies": {
-    "codecov": "^3.8.1",
-    "eslint": "^10.10.0",
-    "eslint-config-airbnb": "^17.1.0",
-    "eslint-config-prettier": "^4.2.0",
-    "eslint-plugin-import": "^2.14.0",
-    "gost89": "^0.1.11",
-    "prettier": "^1.17.0",
-    "tsdown": "^0.22.7",
-    "vite": "^6.3.5",
-    "vitest": "^3.2.7"
+    "barvinok-gost89": "0.1.0",
+    "tsdown": "^0.22.7"
   },
   "dependencies": {
-    "asn1.js": "muromec/asn1.js",
-    "bn.js": ">= 0.14",
-    "buffer": ">= 3.0",
-    "jksreader": "^1.0.0",
-    "js-lzma": "0.x"
-  },
-  "eslintConfig": {
-    "extends": [
-      "airbnb",
-      "prettier"
-    ]
+    "barvinok-asn1": "0.1.0",
+    "bn.js": "^5.2.5",
+    "buffer": "^5.7.1",
+    "barvinok-keystore": "0.1.0",
+    "js-lzma": "^0.1.0"
   },
   "module": "dist/index.mjs",
   "exports": {
@@ -60,5 +46,14 @@
       "import": "./dist/index.mjs",
       "default": "./dist/index.cjs"
     }
-  }
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "files": [
+    "dist/",
+    "lib/",
+    "LICENSE",
+    "README.md"
+  ]
 }

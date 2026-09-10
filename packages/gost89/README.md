@@ -10,12 +10,12 @@ Gost89 cipher and hash function implementation in JS
 Algos
 -----
 
-* DSTU Gost 34311-95 hash function
-* DSTU Gost 28147-2009 CFB mode block cipher
-* DSTU Gost 28147-2009 ECB mode block cipher
-* DSTU Gost 28147 key wrapper as specified by DSTSZI [0]
-* PBKDF (Gost-34311 based)
-* Dumb KDF (N-iterations of hash)
+- DSTU Gost 34311-95 hash function
+- DSTU Gost 28147-2009 CFB mode block cipher
+- DSTU Gost 28147-2009 ECB mode block cipher
+- DSTU Gost 28147 key wrapper as specified by DSTSZI [0]
+- PBKDF (Gost-34311 based)
+- Dumb KDF (N-iterations of hash)
 
 [0] http://dstszi.kmu.gov.ua/dstszi/control/uk/publish/article?showHidden=1&art_id=90096&cat_id=38837
 
@@ -26,13 +26,13 @@ This package implements GOST functions, however S-BOX used by default comes
 from Ukrainian counterpart standard DSTU as original GOST does not specify
 explicitly what table to use.
 
-
 Examples
 --------
 
 All function except Hash.update() accept buffer objects, string or byte arrays.
 
 Hash messages:
+
 ```js
 var gost89 = require("gost89");
 var hash = gost89.gosthash("LA LA LA SHTIRLITZ KURWA VODKA MATRIOSKA");
@@ -49,12 +49,11 @@ hash.update32(buffer_of_32_bytes);
 var hash = hash_ctx.finish(Buffer.alloc(32));
 ```
 
-
 Encrypt message:
 
 ```js
 var gost = gost89.init();
-var clear = Buffer.from('lol', 'binary');
+var clear = Buffer.from("lol", "binary");
 gost.key(Buffer.alloc(32));
 var out = gost.crypt(clear, out);
 ```
@@ -66,7 +65,6 @@ var gost = gost89.init();
 var out = gost.crypt_cfb(iv, clear);
 // out contains encrypted text
 ```
-
 
 Properly encrypt message:
 

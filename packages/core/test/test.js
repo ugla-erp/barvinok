@@ -4,19 +4,16 @@ import * as jk from "../lib/index.js";
 
 const { Field, Priv, Pub } = jk;
 
-const valueHEX =
-  "aff3ee09cb429284985849e20de5742e194aa631490f62ba88702505629a65890";
+const valueHEX = "aff3ee09cb429284985849e20de5742e194aa631490f62ba88702505629a65890";
 
-const rvHEX =
-  "ff3ee09cb429284985849e20de5742e194aa631490f62ba88702505629a60895";
+const rvHEX = "ff3ee09cb429284985849e20de5742e194aa631490f62ba88702505629a60895";
 
 describe("Curve", () => {
   describe("#comp_modulus()", () => {
     it("should compute curve modulus", () => {
       const curve = jk.std_curve("DSTU_PB_257");
 
-      const modHEX =
-        "20000000000000000000000000000000000000000000000000000000000001001";
+      const modHEX = "20000000000000000000000000000000000000000000000000000000000001001";
 
       const mod = new Field(modHEX, "hex", curve);
       const modulus = curve.comp_modulus(257, [12, 0]);
@@ -27,8 +24,7 @@ describe("Curve", () => {
     it("should not change modulus value on curve", () => {
       const curve = jk.std_curve("DSTU_PB_257");
 
-      const modHEX =
-        "20000000000000000000000000000000000000000000000000000000000001003";
+      const modHEX = "20000000000000000000000000000000000000000000000000000000000001003";
 
       const mod = new Field(modHEX, "hex", curve);
 
@@ -47,13 +43,13 @@ describe("Curve", () => {
     const pubX = new Field(
       "00AFF3EE09CB429284985849E20DE5742E194AA631490F62BA88702505629A6589",
       "hex",
-      curve
+      curve,
     );
 
     const pubY = new Field(
       "01B345BC134F27DA251EDFAE97B3F306B4E8B8CB9CF86D8651E4FB301EF8E1239C",
       "hex",
-      curve
+      curve,
     );
 
     it("should check if point is part of curve", () => {
@@ -86,10 +82,8 @@ describe("Field", () => {
 
   describe("#mul", () => {
     it("should return product of two values", () => {
-      const hexB =
-        "01B345BC134F27DA251EDFAE97B3F306B4E8B8CB9CF86D8651E4FB301EF8E1239C";
-      const expectHEX =
-        "157b8e91c8b225469821fc836045a7c09c30d9fdee54b680c8247821f8c4e3352";
+      const hexB = "01B345BC134F27DA251EDFAE97B3F306B4E8B8CB9CF86D8651E4FB301EF8E1239C";
+      const expectHEX = "157b8e91c8b225469821fc836045a7c09c30d9fdee54b680c8247821f8c4e3352";
       const valueA = new Field(valueHEX, "hex", curve);
       const valueB = new Field(hexB, "hex", curve);
       const expectC = new Field(expectHEX, "hex", curve);
@@ -103,8 +97,7 @@ describe("Field", () => {
 
   describe("#inv", () => {
     it("should return negative of r", () => {
-      const expectRHEX =
-        "f5ae84d0c4dc2e7e89c670fb2083d124be50b413efb6863705bd63a5168352e0";
+      const expectRHEX = "f5ae84d0c4dc2e7e89c670fb2083d124be50b413efb6863705bd63a5168352e0";
       const valueA = new Field(valueHEX, "hex", curve);
       const expectR = new Field(expectRHEX, "hex", curve);
       const fieldA = curve.field(valueA);
@@ -119,12 +112,12 @@ describe("Field", () => {
       const initial = new Field(
         "7a32849e569c8888f25de6f69a839d75057383f473acf559abd3c5d683294ceb",
         "hex",
-        curve
+        curve,
       );
       const expect = new Field(
         "3d19424f2b4e4444792ef37b4d41ceba82b9c1fa39d67aacd5e9e2eb4194a67",
         "hex",
-        curve
+        curve,
       );
       initial.shiftRightM(5);
 
@@ -136,14 +129,11 @@ describe("Field", () => {
 describe("Point", () => {
   const curve = jk.std_curve("DSTU_PB_257");
 
-  const RAND_E_HEX =
-    "7A32849E569C8888F25DE6F69A839D75057383F473ACF559ABD3C5D683294CEB";
+  const RAND_E_HEX = "7A32849E569C8888F25DE6F69A839D75057383F473ACF559ABD3C5D683294CEB";
 
-  const PUB_X_HEX =
-    "00AFF3EE09CB429284985849E20DE5742E194AA631490F62BA88702505629A6589";
+  const PUB_X_HEX = "00AFF3EE09CB429284985849E20DE5742E194AA631490F62BA88702505629A6589";
 
-  const PUB_Y_HEX =
-    "01B345BC134F27DA251EDFAE97B3F306B4E8B8CB9CF86D8651E4FB301EF8E1239C";
+  const PUB_Y_HEX = "01B345BC134F27DA251EDFAE97B3F306B4E8B8CB9CF86D8651E4FB301EF8E1239C";
 
   describe("#add", () => {
     it("should produce specific point", () => {
@@ -154,13 +144,13 @@ describe("Point", () => {
       const ppX = new Field(
         "176dbde19773dfd335665597e8d6a0ab678721a5bb7030f25dc4c48b809ef3520",
         "hex",
-        curve
+        curve,
       );
 
       const ppY = new Field(
         "6e75301556ea5d571403086691030f024c026907c8e818b2eedd9184d12040ee",
         "hex",
-        curve
+        curve,
       );
 
       const pubQ = curve.point(pubX, pubY);
@@ -182,13 +172,13 @@ describe("Point", () => {
       const ppX = new Field(
         "f26df77ca4c807c6b94f5c577415a1fce603a85ae7678717e16cb9a78de32d15",
         "hex",
-        curve
+        curve,
       );
 
       const ppY = new Field(
         "1785fded2804bea15b02c4fd785fd3e98ab2435b8d78da44e195a9a088d3fc2d4",
         "hex",
-        curve
+        curve,
       );
 
       const pubQ = curve.point(pubX, pubY);
@@ -201,8 +191,7 @@ describe("Point", () => {
 
   describe("#trace()", () => {
     it("should compute field trace", () => {
-      const valueHex =
-        "2A29EF207D0E9B6C55CD260B306C7E007AC491CA1B10C62334A9E8DCD8D20FB6";
+      const valueHex = "2A29EF207D0E9B6C55CD260B306C7E007AC491CA1B10C62334A9E8DCD8D20FB6";
       const value = new Field(valueHex, "hex", curve);
       const trace = value.trace();
 
@@ -218,14 +207,12 @@ describe("Point", () => {
 
     it("should compute coordinates from compressed point", () => {
       const coords = curve.expand(
-        "2A29EF207D0E9B6C55CD260B306C7E007AC491CA1B10C62334A9E8DCD8D20FB6"
+        "2A29EF207D0E9B6C55CD260B306C7E007AC491CA1B10C62334A9E8DCD8D20FB6",
       );
 
       assert.equal(true, curve.base.equals(coords));
 
-      const pt = curve.point(
-        "2A29EF207D0E9B6C55CD260B306C7E007AC491CA1B10C62334A9E8DCD8D20FB6"
-      );
+      const pt = curve.point("2A29EF207D0E9B6C55CD260B306C7E007AC491CA1B10C62334A9E8DCD8D20FB6");
       assert.equal(true, pt.equals(curve.base));
     });
 
@@ -233,20 +220,16 @@ describe("Point", () => {
       const compressed = new Field(
         "01A77131A7C14F9AA6EA8C760D39673D5F0330FAB1118D55B55B7AF0735975485F",
         "hex",
-        curve
+        curve,
       );
       const pt = curve.point(compressed);
       const expectPoint = curve.point(
         new Field(
           "01A77131A7C14F9AA6EA8C760D39673D5F0330FAB1118D55B55B7AF0735975485F",
           "hex",
-          curve
+          curve,
         ),
-        new Field(
-          "DC058ADA665D99084038B5F914FB9CF7214760A4865B49CAF7F4BE7379F3A395",
-          "hex",
-          curve
-        )
+        new Field("DC058ADA665D99084038B5F914FB9CF7214760A4865B49CAF7F4BE7379F3A395", "hex", curve),
       );
 
       assert.equal(pt.equals(expectPoint), true);
@@ -256,20 +239,16 @@ describe("Point", () => {
       const compressed = new Field(
         "2A29EF207D0E9B6C55CD260B306C7E007AC491CA1B10C62334A9E8DCD8D20FB6",
         "hex",
-        curve
+        curve,
       );
       const pt = curve.point(compressed);
       const expectPoint = curve.point(
-        new Field(
-          "2A29EF207D0E9B6C55CD260B306C7E007AC491CA1B10C62334A9E8DCD8D20FB7",
-          "hex",
-          curve
-        ),
+        new Field("2A29EF207D0E9B6C55CD260B306C7E007AC491CA1B10C62334A9E8DCD8D20FB7", "hex", curve),
         new Field(
           "010686D41FF744D4449FCCF6D8EEA03102E6812C93A9D60B978B702CF156D814EF",
           "hex",
-          curve
-        )
+          curve,
+        ),
       );
 
       assert.equal(pt.equals(expectPoint), true);
@@ -284,7 +263,7 @@ describe("Point", () => {
       const expected = new Field(
         "2a29ef207d0e9b6c55cd260b306c7e007ac491ca1b10c62334a9e8dcd8d20fb6",
         "hex",
-        curve
+        curve,
       );
 
       assert.equal(compressed.equals(expected), true);
@@ -310,36 +289,36 @@ describe("Sign", () => {
   const privD = new Field(
     "2A45EAFE4CD469F811737780C57253360FBCC58E134C9A1FDCD10B0E4529A143",
     "hex",
-    curve
+    curve,
   );
 
   const hashValue = new Field(
     "6845214B63288A832A772E1FE6CB6C7D3528569E29A8B3584370FDC65F474242",
     "hex",
-    curve
+    curve,
   );
 
   const hashBuffer = Buffer.from(
     "6845214B63288A832A772E1FE6CB6C7D3528569E29A8B3584370FDC65F474242",
-    "hex"
+    "hex",
   );
 
   const randE = new Field(
     "7A32849E569C8888F25DE6F69A839D75057383F473ACF559ABD3C5D683294CEB",
     "hex",
-    curve
+    curve,
   );
 
   const pubX = new Field(
     "00AFF3EE09CB429284985849E20DE5742E194AA631490F62BA88702505629A6589",
     "hex",
-    curve
+    curve,
   );
 
   const pubY = new Field(
     "01B345BC134F27DA251EDFAE97B3F306B4E8B8CB9CF86D8651E4FB301EF8E1239C",
     "hex",
-    curve
+    curve,
   );
 
   describe("#help_sign", () => {
@@ -349,11 +328,11 @@ describe("Sign", () => {
 
       assert.equal(
         sig.s.toString(true),
-        "ccc6816453a903a1b641df999011177df420d21a72236d798532aef42e224ab"
+        "ccc6816453a903a1b641df999011177df420d21a72236d798532aef42e224ab",
       );
       assert.equal(
         sig.r.toString(true),
-        "491fa1ef75eaef75e1f20cf3918993ab37e06005ea8e204bc009a1fa61bb0fb2"
+        "491fa1ef75eaef75e1f20cf3918993ab37e06005ea8e204bc009a1fa61bb0fb2",
       );
     });
   });
@@ -411,13 +390,13 @@ describe("Sign", () => {
         s: new Field(
           "ccc6816453a903a1b641df999011177df420d21a72236d798532aef42e224ab",
           "hex",
-          curve
+          curve,
         ),
         r: new Field(
           "491fa1ef75eaef75e1f20cf3918993ab37e06005ea8e204bc009a1fa61bb0fb2",
           "hex",
-          curve
-        )
+          curve,
+        ),
       };
       const asign = Priv.sign_serialise(sign, "short");
       assert.equal(asign.toString("hex"), hex);
@@ -431,7 +410,7 @@ describe("Sign", () => {
 
       const sign = {
         s: "ccc6816453a903a1b641df999011177df420d21a72236d798532aef42e224ab",
-        r: "491fa1ef75eaef75e1f20cf3918993ab37e06005ea8e204bc009a1fa61bb0fb2"
+        r: "491fa1ef75eaef75e1f20cf3918993ab37e06005ea8e204bc009a1fa61bb0fb2",
       };
       const asign = Pub.parse_sign(Buffer.from(hex, "hex"), "short", curve);
 
@@ -449,7 +428,7 @@ describe("Broken", () => {
       const compressed = new Field(
         "76cd4555ad63455529755e5c3f3066c3bcb957cc63d00e22c6dd1e9ed316b419",
         "hex",
-        curve
+        curve,
       );
 
       const coords = curve.expand(compressed);
@@ -457,12 +436,12 @@ describe("Broken", () => {
       const px = new Field(
         "76cd4555ad63455529755e5c3f3066c3bcb957cc63d00e22c6dd1e9ed316b418",
         "hex",
-        curve
+        curve,
       );
       const py = new Field(
         "12b20103548f45dcbed5486022dfcb244b2d996e0d3d761abaf73ba16ea26e0d3",
         "hex",
-        curve
+        curve,
       );
       const expectPoint = curve.point(px, py);
 

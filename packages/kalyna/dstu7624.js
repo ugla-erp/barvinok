@@ -1,10 +1,10 @@
 // Kalyna (DSTU 7624:2014) block cipher, ported from cryptonite src/cryptonite/c/dstu7624.c.
 // Currently implements Kalyna-256 (block 32 bytes, key 32 bytes) — the Dstu7624cbc-256 case.
-'use strict';
+"use strict";
 
-const { sbox, sboxRev, mds, mdsRev } = require('./constants');
+const { sbox, sboxRev, mds, mdsRev } = require("./constants");
 
-const MASK64 = 0xFFFFFFFFFFFFFFFFn;
+const MASK64 = 0xffffffffffffffffn;
 const REDUCTION_POLYNOMIAL = 0x11d;
 
 function multiplyGalua(x, y) {
@@ -26,7 +26,7 @@ function buildTable(sb, matrix) {
     for (let i = 0; i < 256; i++) {
       let v = 0n;
       for (let j = 0; j < 8; j++) {
-        const m = multiplyGalua(matrix[j * 8 + k], sb[((k % 4) * 256) + i]);
+        const m = multiplyGalua(matrix[j * 8 + k], sb[(k % 4) * 256 + i]);
         v ^= BigInt(m) << BigInt(j * 8);
       }
       T[k][i] = v;
@@ -35,7 +35,7 @@ function buildTable(sb, matrix) {
   return T;
 }
 
-const pBoxrowcol = buildTable(sbox, mds);       // forward MixColumns
+const pBoxrowcol = buildTable(sbox, mds); // forward MixColumns
 const pBoxrowcolRev = buildTable(sboxRev, mdsRev); // inverse MixColumns
 
 function byteOf(w, b) {
@@ -63,17 +63,48 @@ function wordsToBytes(words, len) {
 // SubBytes + ShiftRows + MixColumns (forward), state of 4 x uint64.
 // Equivalent to C subrowcol256 = kalina_G256(T, s, 0,0,3,3,2,2,1,1).
 function mix256(s) {
-  const s0 = s[0], s1 = s[1], s2 = s[2], s3 = s[3];
+  const s0 = s[0],
+    s1 = s[1],
+    s2 = s[2],
+    s3 = s[3];
   const T = pBoxrowcol;
   const o = new Array(4);
-  o[0] = T[0][byteOf(s0, 0)] ^ T[1][byteOf(s0, 1)] ^ T[2][byteOf(s3, 2)] ^ T[3][byteOf(s3, 3)] ^
-         T[4][byteOf(s2, 4)] ^ T[5][byteOf(s2, 5)] ^ T[6][byteOf(s1, 6)] ^ T[7][byteOf(s1, 7)];
-  o[1] = T[0][byteOf(s1, 0)] ^ T[1][byteOf(s1, 1)] ^ T[2][byteOf(s0, 2)] ^ T[3][byteOf(s0, 3)] ^
-         T[4][byteOf(s3, 4)] ^ T[5][byteOf(s3, 5)] ^ T[6][byteOf(s2, 6)] ^ T[7][byteOf(s2, 7)];
-  o[2] = T[0][byteOf(s2, 0)] ^ T[1][byteOf(s2, 1)] ^ T[2][byteOf(s1, 2)] ^ T[3][byteOf(s1, 3)] ^
-         T[4][byteOf(s0, 4)] ^ T[5][byteOf(s0, 5)] ^ T[6][byteOf(s3, 6)] ^ T[7][byteOf(s3, 7)];
-  o[3] = T[0][byteOf(s3, 0)] ^ T[1][byteOf(s3, 1)] ^ T[2][byteOf(s2, 2)] ^ T[3][byteOf(s2, 3)] ^
-         T[4][byteOf(s1, 4)] ^ T[5][byteOf(s1, 5)] ^ T[6][byteOf(s0, 6)] ^ T[7][byteOf(s0, 7)];
+  o[0] =
+    T[0][byteOf(s0, 0)] ^
+    T[1][byteOf(s0, 1)] ^
+    T[2][byteOf(s3, 2)] ^
+    T[3][byteOf(s3, 3)] ^
+    T[4][byteOf(s2, 4)] ^
+    T[5][byteOf(s2, 5)] ^
+    T[6][byteOf(s1, 6)] ^
+    T[7][byteOf(s1, 7)];
+  o[1] =
+    T[0][byteOf(s1, 0)] ^
+    T[1][byteOf(s1, 1)] ^
+    T[2][byteOf(s0, 2)] ^
+    T[3][byteOf(s0, 3)] ^
+    T[4][byteOf(s3, 4)] ^
+    T[5][byteOf(s3, 5)] ^
+    T[6][byteOf(s2, 6)] ^
+    T[7][byteOf(s2, 7)];
+  o[2] =
+    T[0][byteOf(s2, 0)] ^
+    T[1][byteOf(s2, 1)] ^
+    T[2][byteOf(s1, 2)] ^
+    T[3][byteOf(s1, 3)] ^
+    T[4][byteOf(s0, 4)] ^
+    T[5][byteOf(s0, 5)] ^
+    T[6][byteOf(s3, 6)] ^
+    T[7][byteOf(s3, 7)];
+  o[3] =
+    T[0][byteOf(s3, 0)] ^
+    T[1][byteOf(s3, 1)] ^
+    T[2][byteOf(s2, 2)] ^
+    T[3][byteOf(s2, 3)] ^
+    T[4][byteOf(s1, 4)] ^
+    T[5][byteOf(s1, 5)] ^
+    T[6][byteOf(s0, 6)] ^
+    T[7][byteOf(s0, 7)];
   return o;
 }
 
@@ -96,10 +127,10 @@ function keySchedule(key) {
 
   // p_help_round_key (block_len == key_len branch)
   let hrkey = [0x09n, 0n, 0n, 0n];
-  hrkey = addWords(hrkey, keyWords);            // 1. hrkey += key
-  hrkey = xorWords(mix256(hrkey), keyWords);    // 2. hrkey = mix(hrkey) ^ key
-  hrkey = addWords(mix256(hrkey), keyWords);    // 3. hrkey = mix(hrkey) + key
-  hrkey = mix256(hrkey);                        // 4. hrkey = mix(hrkey)
+  hrkey = addWords(hrkey, keyWords); // 1. hrkey += key
+  hrkey = xorWords(mix256(hrkey), keyWords); // 2. hrkey = mix(hrkey) ^ key
+  hrkey = addWords(mix256(hrkey), keyWords); // 3. hrkey = mix(hrkey) + key
+  hrkey = mix256(hrkey); // 4. hrkey = mix(hrkey)
 
   // key shifts: for block==key, shift = 56*i bytes, i = 0..rounds/2
   const keyShifts = [];
@@ -118,7 +149,7 @@ function keySchedule(key) {
     const snap = rkeys.slice(base, base + 4);
     for (let k = 0; k < 4; k++) rkeys[base + k] = (rkeys[base + k] + keyShifts[i * 4 + k]) & MASK64;
     let v = mix256(rkeys.slice(base, base + 4));
-    for (let k = 0; k < 4; k++) v[k] ^= snap[k];       // sub_shift_mix_xor
+    for (let k = 0; k < 4; k++) v[k] ^= snap[k]; // sub_shift_mix_xor
     v = mix256(v);
     for (let k = 0; k < 4; k++) v[k] = (v[k] + snap[k]) & MASK64; // sub_shift_mix_add
     for (let k = 0; k < 4; k++) rkeys[base + k] = v[k];
@@ -183,17 +214,52 @@ function reverseRkeys(rkeys) {
 
 // inv_subrowcol_xor256 (inverse round, XOR with reversed round key).
 function invXorRound(s, rkey) {
-  const s0 = s[0], s1 = s[1], s2 = s[2], s3 = s[3];
+  const s0 = s[0],
+    s1 = s[1],
+    s2 = s[2],
+    s3 = s[3];
   const T = pBoxrowcolRev;
   const o = new Array(4);
-  o[0] = rkey[0] ^ T[0][byteOf(s0, 0)] ^ T[1][byteOf(s0, 1)] ^ T[2][byteOf(s1, 2)] ^ T[3][byteOf(s1, 3)] ^
-         T[4][byteOf(s2, 4)] ^ T[5][byteOf(s2, 5)] ^ T[6][byteOf(s3, 6)] ^ T[7][byteOf(s3, 7)];
-  o[1] = rkey[1] ^ T[0][byteOf(s1, 0)] ^ T[1][byteOf(s1, 1)] ^ T[2][byteOf(s2, 2)] ^ T[3][byteOf(s2, 3)] ^
-         T[4][byteOf(s3, 4)] ^ T[5][byteOf(s3, 5)] ^ T[6][byteOf(s0, 6)] ^ T[7][byteOf(s0, 7)];
-  o[2] = rkey[2] ^ T[0][byteOf(s2, 0)] ^ T[1][byteOf(s2, 1)] ^ T[2][byteOf(s3, 2)] ^ T[3][byteOf(s3, 3)] ^
-         T[4][byteOf(s0, 4)] ^ T[5][byteOf(s0, 5)] ^ T[6][byteOf(s1, 6)] ^ T[7][byteOf(s1, 7)];
-  o[3] = rkey[3] ^ T[0][byteOf(s3, 0)] ^ T[1][byteOf(s3, 1)] ^ T[2][byteOf(s0, 2)] ^ T[3][byteOf(s0, 3)] ^
-         T[4][byteOf(s1, 4)] ^ T[5][byteOf(s1, 5)] ^ T[6][byteOf(s2, 6)] ^ T[7][byteOf(s2, 7)];
+  o[0] =
+    rkey[0] ^
+    T[0][byteOf(s0, 0)] ^
+    T[1][byteOf(s0, 1)] ^
+    T[2][byteOf(s1, 2)] ^
+    T[3][byteOf(s1, 3)] ^
+    T[4][byteOf(s2, 4)] ^
+    T[5][byteOf(s2, 5)] ^
+    T[6][byteOf(s3, 6)] ^
+    T[7][byteOf(s3, 7)];
+  o[1] =
+    rkey[1] ^
+    T[0][byteOf(s1, 0)] ^
+    T[1][byteOf(s1, 1)] ^
+    T[2][byteOf(s2, 2)] ^
+    T[3][byteOf(s2, 3)] ^
+    T[4][byteOf(s3, 4)] ^
+    T[5][byteOf(s3, 5)] ^
+    T[6][byteOf(s0, 6)] ^
+    T[7][byteOf(s0, 7)];
+  o[2] =
+    rkey[2] ^
+    T[0][byteOf(s2, 0)] ^
+    T[1][byteOf(s2, 1)] ^
+    T[2][byteOf(s3, 2)] ^
+    T[3][byteOf(s3, 3)] ^
+    T[4][byteOf(s0, 4)] ^
+    T[5][byteOf(s0, 5)] ^
+    T[6][byteOf(s1, 6)] ^
+    T[7][byteOf(s1, 7)];
+  o[3] =
+    rkey[3] ^
+    T[0][byteOf(s3, 0)] ^
+    T[1][byteOf(s3, 1)] ^
+    T[2][byteOf(s0, 2)] ^
+    T[3][byteOf(s0, 3)] ^
+    T[4][byteOf(s1, 4)] ^
+    T[5][byteOf(s1, 5)] ^
+    T[6][byteOf(s2, 6)] ^
+    T[7][byteOf(s2, 7)];
   return o;
 }
 
@@ -212,7 +278,10 @@ function invSubCombine(w0, w1, w2, w3) {
 }
 
 function invSub(s, rkey) {
-  const s0 = s[0], s1 = s[1], s2 = s[2], s3 = s[3];
+  const s0 = s[0],
+    s1 = s[1],
+    s2 = s[2],
+    s3 = s[3];
   const o = new Array(4);
   o[0] = (invSubCombine(s0, s1, s2, s3) - rkey[0]) & MASK64;
   o[1] = (invSubCombine(s1, s2, s3, s0) - rkey[1]) & MASK64;
@@ -233,7 +302,8 @@ function decryptBlock(rkeysRev, input) {
 }
 
 function cbcEncrypt(key, iv, data) {
-  if (data.length % 32 !== 0) throw new Error('CBC input must be a multiple of 32 bytes, got ' + data.length);
+  if (data.length % 32 !== 0)
+    throw new Error("CBC input must be a multiple of 32 bytes, got " + data.length);
   const rkeys = keySchedule(key);
   let prev = iv;
   const out = Buffer.alloc(data.length);
@@ -249,7 +319,8 @@ function cbcEncrypt(key, iv, data) {
 }
 
 function cbcDecrypt(key, iv, data) {
-  if (data.length % 32 !== 0) throw new Error('CBC input must be a multiple of 32 bytes, got ' + data.length);
+  if (data.length % 32 !== 0)
+    throw new Error("CBC input must be a multiple of 32 bytes, got " + data.length);
   const rkeys = keySchedule(key);
   const rkeysRev = reverseRkeys(rkeys);
   let prev = iv;
