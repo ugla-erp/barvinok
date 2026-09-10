@@ -34,7 +34,7 @@ All function except Hash.update() accept buffer objects, string or byte arrays.
 Hash messages:
 
 ```js
-var gost89 = require("gost89");
+import gost89 from "@ugla/barvinok-gost89";
 var hash = gost89.gosthash("LA LA LA SHTIRLITZ KURWA VODKA MATRIOSKA");
 // <Buffer 0a 32 7f 3b ce e1 f3 de 0f 40 61 2e c3 ce d0 a3 29 51 b8 b2 16 8e 9a 01 0f 5b 15 46 c0 a9 1d 93>
 
