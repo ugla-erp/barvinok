@@ -1,11 +1,12 @@
-Gost89
-======
+# @ugla/barvinok-gost89
 
-Gost89 cipher and hash function implementation in JS
+GOST 28147-89 and GOST 34.311-95 in pure JavaScript — the cipher, hash, MAC, key wrapper and
+container loader that every Ukrainian certificate issued before the Купина transition depends on.
 
-[![Build Status](https://travis-ci.org/dstucrypt/gost89.svg?branch=master)](https://travis-ci.org/dstucrypt/gost89)
-[![npm module](https://badge.fury.io/js/gost89.svg)](https://www.npmjs.org/package/gost89)
-[![dependencies](https://david-dm.org/dstucrypt/gost89.png)](https://david-dm.org/dstucrypt/gost89)
+Forked from [gost89](https://github.com/dstucrypt/gost89) by Ilya Petrov and contributors — see the
+repository [NOTICE](../../NOTICE).
+
+ESM, Node 22 or newer.
 
 Algos
 -----
@@ -79,3 +80,5 @@ var shared_key = some_diffie_hellman_here(me, you); // see jkurwa
 var wrapped_key = gost89.wrap_key(key, shared_key, iv);
 // send enc and wrapped_key to other party
 ```
+
+Apache-2.0 — see [LICENSE](LICENSE).

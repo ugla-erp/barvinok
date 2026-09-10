@@ -1,6 +1,6 @@
 {
   "name": "@ugla/barvinok-kupyna",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "barvinok-kupyna hash function implementation",
   "type": "module",
   "main": "dstu7564.js",

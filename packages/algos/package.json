@@ -1,6 +1,6 @@
 {
   "name": "@ugla/barvinok-algos",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Combined DSTU algorithm dispatcher for barvinok (barvinok-gost89 + barvinok-kupyna + barvinok-kalyna)",
   "type": "module",
   "main": "index.js",
@@ -19,9 +19,9 @@
   "author": "Ilya Petrov <ilya.muromec@gmail.com>",
   "license": "Apache-2.0",
   "dependencies": {
-    "@ugla/barvinok-gost89": "0.1.0",
-    "@ugla/barvinok-kupyna": "0.1.0",
-    "@ugla/barvinok-kalyna": "0.1.0"
+    "@ugla/barvinok-gost89": "0.1.1",
+    "@ugla/barvinok-kupyna": "0.1.1",
+    "@ugla/barvinok-kalyna": "0.1.1"
   },
   "repository": {
     "type": "git",

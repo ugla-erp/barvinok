@@ -1,63 +1,112 @@
-jkurwa
-======
+# @ugla/barvinok
 
-GF2m ellipcit curves library in javascript.
+Ukrainian qualified electronic signatures in JavaScript: ДСТУ 4145 over binary fields, the ASN.1
+models for X.509 and CMS, key-container parsing, and CAdES signing.
 
-- Supports short Weierstrass curves used in Ukrainian standard DSTU 4145;
-- Provides key deriviation for DSTU block ciphers (see https://github.com/muromec/em-gost);
-- Encypted containers can be parsed and decrypted if respective cipher implementation is passed. See gost89 and dstucrypt/agent for reference;
-- Encrypted and signed messages in wicked PKCS#7 format used by tax office (sta.gov.ua) are supported for both read and write (see jk.Box, jk.util.transport);
-- Includes parsers for signed and encrypted messages, X509.v3 certificates, JKS and Key-6.dat key containers, TSP, CMP, OCSP requests and responses.
+Forked from [jkurwa](https://github.com/dstucrypt/jkurwa) by Ilya Petrov and contributors — see the
+repository [NOTICE](../../NOTICE). Almost all of the mathematics here is theirs.
 
-Warning
--------
+```js
+import jk from "@ugla/barvinok";
+import { algos } from "@ugla/barvinok-algos";
 
-- Jkurwa does not guarranty constant-time calculcation;
-- Jkurwa only verifies signature against public key and does not actually check X.509 certificate validity unless CA list is loaded.
-  See dstucrypt/agent repo readme for details.
+const priv = jk.Priv.from_protected(container, password, algos());
+const cert = jk.Certificate.from_asn1(certificateBytes);
+```
 
-![cej repo je strefa wolna wid Kaczyńskiego](https://raw.githubusercontent.com/muromec/jkurwa/master/kdpv.jpg)
+## What is in it
 
-[![Build Status](https://travis-ci.org/dstucrypt/jkurwa.svg?branch=master)](https://travis-ci.org/dstucrypt/jkurwa)
-[![codecov](https://codecov.io/gh/dstucrypt/jkurwa/branch/master/graph/badge.svg)](https://codecov.io/gh/dstucrypt/jkurwa)
-[![npm module](https://badge.fury.io/js/jkurwa.svg)](https://www.npmjs.org/package/jkurwa)
-[![dependencies](https://david-dm.org/dstucrypt/jkurwa.png)](https://david-dm.org/dstucrypt/jkurwa)
+- DSTU 4145 short Weierstrass curves over GF(2^m), with the standard named curves
+- ASN.1 models for X.509 v3 certificates and the CMS/PKCS#7 profile Ukrainian authorities use
+- Key containers: `Key-6.dat`, PFX (PKCS#12) and JKS
+- Signed and encrypted messages, read and write, including CAdES
+- TSP, CMP and OCSP requests and responses
 
-Usage
------
+Cipher and hash primitives are separate packages, passed in as an algorithm object — see
+`@ugla/barvinok-algos`.
 
-See ./test/ and ./examples/ directories. See dstucrypt/agent repo for example app.
+## What it does not promise
 
-Sister libraries:
+**Not constant-time.** Nothing here is hardened against timing analysis. That is inherited from
+upstream and is not something a pure-JavaScript implementation can honestly claim.
 
-- https://github.com/dstucrypt/ukurwa4145 - DSTU 4145 in Python;
-- https://github.com/dstucrypt/gost89 - GOST cipher, hash, mac, key wrapper and container loader in pure js;
-- https://github.com/dstucrypt/python-gost89 - gost hash for python (2 and 3);
-- https://github.com/dstucrypt/jksreader - library to parse java-style key containers used by privatbank;
-- https://github.com/muromec/zozol - dumb ASN.1 parser and serialisator for python with X509 and wicked CMS schemas;
-- https://github.com/dstucrypt/openssl-dstu - patched OpenSSL with DSTU 4145 and GOST family support (outdated, unmaintained).
+**It verifies a signature, not a certificate chain.** `verify()` checks a signature against a public
+key. Deciding whether the certificate behind that key is trusted, current and unrevoked is a separate
+job and needs a CA list loaded.
 
-Demo site: https://dstucrypt.github.io/signerbox2/
+**CAdES-BES unless you add a timestamp.** The container carries the signer's own assertion of when
+they signed. Ukrainian law has required a qualified timestamp for long-term retention since
+07.11.2018 (ст. 26 ч. 4 of the electronic trust services act), so a retained signature needs a TSP
+token attaching — `services/tsp.js` fetches one.
 
-Demo apps:
+## What changed, relative to jkurwa
 
-- https://github.com/dstucrypt/agent -- command line utility and daemon service to sign, encrypt and decrypt files;
-- https://github.com/dstucrypt/dstukeys -- web interface with examples of authentication;
-- https://github.com/dstucrypt/signerbox2/ -- another web app;
-- https://github.com/max1gu/e-rro -- cash register app (прогрманий рро).
-- https://github.com/p2p-sys/OpenPRRO -- another cash register app (рро).
+Every claim here is a diff against the imported upstream, visible in `git log`.
 
-To cross-verifiy signatures use https://czo.gov.ua/verify .
+**Two defects fixed.** `Certificate.verifySelfSigned` returned `canUseFor(usage)` ALONE when a usage
+was named — the ternary swallowed the conjunction, so a tampered or expired certificate verified as
+long as its key-usage bits allowed the operation. `verify()` ten lines above spells the identical
+expression with the parentheses the author meant. Nothing caught it because every existing test
+called the method without `usage`, which takes the other branch. Separately, `services/cmp.js`
+`unpack()` threw `RangeError` on a reply shorter than its own status word, where callers branch on
+`null`.
 
-References
-----------
+**ESM, published as source.** No bundle. The upstream source carried 28 extensionless relative
+imports, which Vite resolves and Node does not — invisible while a tsdown bundle was shipped, and
+fatal the moment source was published. All fixed, with a test that imports the package in a real
+`node` process rather than through a bundler.
 
-- Certificate format (in Ukrainian), basically kind of X.509v3: http://zakon4.rada.gov.ua/laws/show/z1398-12
-- Private key container format, PBES2-like (effective from 01.01.2016): http://zakon3.rada.gov.ua/laws/show/z2227-13
-- See https://github.com/dstucrypt/agent repo for tax report format and implementation details
-- Law on Trust Services - http://zakon.rada.gov.ua/laws/show/2155-19
+**No git dependency.** Upstream pulled `asn1.js` from `muromec/asn1.js` — a personal GitHub account,
+no registry, no integrity hash, no version. `@ugla/barvinok-asn1` is the published equivalent:
+asn1.js 5.4.1 plus the same three-line CHOICE-parent patch, kept diffable so it can be re-based or
+retired if the fix lands upstream.
 
-Bonus
----
+**The CMP client is reachable.** `services/cmp.js` was never exported; it is now `jk.cmp`, with
+tests. That is what makes certificate lookup by key id possible without vendoring the file.
 
-First known use of the word Kurwa was recorded in 1415. Happy 600 birthday Kurwa!
+**Tests that can fail.** The workspace runs 242 on vitest. Several inherited suites printed
+`PASS`/`FAIL` and exited 0 either way, so a wrong digest could not fail a build.
+
+**Hygiene.** `files`, `exports`, `engines: >=22`, pinned dependencies, and zero npm audit findings
+(all five came from mocha).
+
+## Roadmap
+
+Done:
+
+- [x] ESM throughout, source published, no bundle step
+- [x] One toolchain for the workspace — oxlint, ESLint, Prettier, vitest
+- [x] `asn1.js` git dependency replaced with a published package
+- [x] `verifySelfSigned` signature-check defect fixed
+- [x] `cmp.unpack` truncated-reply defect fixed, and the CMP client exported
+- [x] Published to npm under `@ugla`
+
+Next, roughly in order:
+
+- [ ] **Stop hardcoding the hash in the container layer.** `Message.constructSigned` writes
+      `"Gost34311"` as `digestAlgorithms` and as the signerInfo's `digestAlgorithm` regardless of
+      what actually ran, so a ДСТУ 7564 signature would describe itself as GOST. Until this is
+      fixed, a container this library builds can only honestly be a GOST one.
+- [ ] **Fix `Priv.to_pbes2()`.** It calls `storesave(raw, "PBES2", password, iv, salt)` — five
+      arguments — against a `storesave(raw, params, password)` that takes three. Writing a
+      protected container cannot work as written.
+- [ ] Types: JSDoc annotations and emitted `.d.ts`
+- [ ] Burn down ~90 inherited lint findings, package by package, with the known-answer tests as the
+      check
+- [ ] Move the dead table generator out of `@ugla/barvinok-kupyna` and into a `tools/` script — it
+      ships to consumers and would throw if called
+- [ ] EU (eIDAS) signatures — see the repository README for what that actually involves
+
+## Module format
+
+ESM, published as source, Node 22 or newer. `require()` of an ESM module works on Node 22, so a
+CommonJS caller is not shut out.
+
+## References
+
+- Certificate format (Ukrainian, an X.509v3 profile): http://zakon4.rada.gov.ua/laws/show/z1398-12
+- Private key container format, PBES2-like: http://zakon3.rada.gov.ua/laws/show/z2227-13
+- Law on electronic trust services: http://zakon.rada.gov.ua/laws/show/2155-19
+- Cross-verify a signature at https://czo.gov.ua/verify
+
+Apache-2.0 — see [LICENSE](LICENSE).
