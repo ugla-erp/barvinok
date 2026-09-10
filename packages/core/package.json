@@ -1,0 +1,64 @@
+{
+  "name": "jkurwa",
+  "version": "1.22.9",
+  "description": "Ukrainian national EC cryptography (DSTU-4145) implementaion",
+  "type": "module",
+  "main": "dist/index.cjs",
+  "browser": {
+    "./lib/rand.js": "./lib/rand.browser.js"
+  },
+  "scripts": {
+    "test": "vitest run",
+    "cover": "npm run test -- --coverage",
+    "build": "tsdown lib/index.js -f cjs -f esm --clean --platform node --target es2015 --deps.never-bundle asn1.js --deps.never-bundle js-lzma --deps.never-bundle jksreader --deps.never-bundle gost89 --deps.never-bundle bn.js --deps.never-bundle buffer"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:dstucrypt/jkurwa"
+  },
+  "keywords": [
+    "ecc",
+    "cryptography",
+    "dstu4145",
+    "ukraine"
+  ],
+  "author": "Ilya Petrov",
+  "license": "BSD",
+  "bugs": {
+    "url": "https://github.com/dstucrypt/jkurwa/issues"
+  },
+  "homepage": "https://github.com/dstucrypt/jkurwa/",
+  "devDependencies": {
+    "codecov": "^3.8.1",
+    "eslint": "^10.10.0",
+    "eslint-config-airbnb": "^17.1.0",
+    "eslint-config-prettier": "^4.2.0",
+    "eslint-plugin-import": "^2.14.0",
+    "gost89": "^0.1.11",
+    "prettier": "^1.17.0",
+    "tsdown": "^0.22.7",
+    "vite": "^6.3.5",
+    "vitest": "^3.2.7"
+  },
+  "dependencies": {
+    "asn1.js": "muromec/asn1.js",
+    "bn.js": ">= 0.14",
+    "buffer": ">= 3.0",
+    "jksreader": "^1.0.0",
+    "js-lzma": "0.x"
+  },
+  "eslintConfig": {
+    "extends": [
+      "airbnb",
+      "prettier"
+    ]
+  },
+  "module": "dist/index.mjs",
+  "exports": {
+    ".": {
+      "require": "./dist/index.cjs",
+      "import": "./dist/index.mjs",
+      "default": "./dist/index.cjs"
+    }
+  }
+}
