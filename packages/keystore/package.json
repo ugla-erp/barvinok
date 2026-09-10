@@ -1,0 +1,22 @@
+{
+  "name": "jksreader",
+  "version": "1.0.0",
+  "description": "JKS format decoder",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Ilya Petrov",
+  "license": "BSD",
+  "dependencies": {
+    "js-sha1": "^0.6.0"
+  },
+  "keywords": [
+    "dstu4145",
+    "ukraine"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:dstucrypt/jksreader"
+  }
+}
