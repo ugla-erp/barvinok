@@ -1,5 +1,5 @@
 /* eslint-disable camelcase,no-underscore-dangle,no-bitwise */
-import asn1 from "barvinok-asn1";
+import asn1 from "@ugla/barvinok-asn1";
 
 import Field from "./field.js";
 import * as wnaf from "./wnaf/index.js";

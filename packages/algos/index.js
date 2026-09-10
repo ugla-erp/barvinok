@@ -1,8 +1,8 @@
 // dstucrypt-algos: combined algorithm object for jkurwa.
 // Depends on the crypto zoo (gost89 + dstu7564 + dstu7624) and exposes algos()
 // with a hashes map + kdf/cipher/storeload dispatchers.
-import gost89 from "barvinok-gost89";
-import dstu7564 from "barvinok-kupyna";
+import gost89 from "@ugla/barvinok-gost89";
+import dstu7564 from "@ugla/barvinok-kupyna";
 import { KupynaMac } from "./kmac.js";
 import { storeload, storesave } from "./storeload.js";
 

@@ -1,5 +1,5 @@
 {
-  "name": "barvinok-kupyna",
+  "name": "@ugla/barvinok-kupyna",
   "version": "0.1.0",
   "description": "barvinok-kupyna hash function implementation",
   "type": "module",
@@ -27,5 +27,8 @@
   "exports": {
     ".": "./dstu7564.js",
     "./package.json": "./package.json"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }

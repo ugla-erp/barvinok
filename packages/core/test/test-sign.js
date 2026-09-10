@@ -1,5 +1,5 @@
 import { describe, it } from "vitest";
-import gost89 from "barvinok-gost89";
+import gost89 from "@ugla/barvinok-gost89";
 import assert from "assert";
 import { loadAsset, loadPriv, loadCert, assertEqualSaved } from "./utils.js";
 

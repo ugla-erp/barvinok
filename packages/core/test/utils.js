@@ -3,7 +3,7 @@ import assert from "assert";
 import { dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 import { expect } from "vitest";
-import gost89 from "barvinok-gost89";
+import gost89 from "@ugla/barvinok-gost89";
 import * as jk from "../lib/index.js";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));

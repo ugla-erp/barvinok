@@ -2,7 +2,7 @@ import Message from "../lib/models/Message.js";
 import Certificate from "../lib/models/Certificate.js";
 
 import Box from "../lib/app/ctx.js";
-import gost89 from "barvinok-gost89";
+import gost89 from "@ugla/barvinok-gost89";
 import fs from "node:fs";
 
 import http from "node:http";

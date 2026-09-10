@@ -1,4 +1,4 @@
-import asn1 from "barvinok-asn1";
+import asn1 from "@ugla/barvinok-asn1";
 import pbes2 from "./pbes.js";
 import * as dstszi2010 from "./dstszi2010.js";
 import * as rfc3280 from "./rfc3280.js";

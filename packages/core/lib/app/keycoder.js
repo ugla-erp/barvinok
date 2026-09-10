@@ -1,4 +1,4 @@
-import asn1 from "barvinok-asn1";
+import asn1 from "@ugla/barvinok-asn1";
 import { Buffer } from "buffer";
 import * as pbes2 from "../spec/pbes.js";
 import * as pfx from "../spec/pfx.js";

@@ -1,4 +1,4 @@
-import asn1 from "barvinok-asn1";
+import asn1 from "@ugla/barvinok-asn1";
 import * as rfc2560 from "./rfc2560-ocsp.js";
 import * as rfc3280 from "./rfc3280.js";
 import { IssuerAndSerialNumber } from "./dstszi2010.js";

@@ -9,6 +9,7 @@ import { b64_encode, b64_decode } from "./util/base64.js"; // consider changing 
 import transport from "./util/transport.js";
 import * as standard from "./standard.js";
 import { Curve, Field, pkey, pubkey, std_curve } from "./curve.js";
+import * as cmp from "./services/cmp.js";
 
 export default Box;
 
@@ -34,4 +35,5 @@ export {
   guess_parse,
   Box,
   models,
+  cmp,
 };

@@ -1,5 +1,5 @@
 {
-  "name": "barvinok-kalyna",
+  "name": "@ugla/barvinok-kalyna",
   "version": "0.1.0",
   "description": "Kalyna (DSTU 7624:2014) block cipher in pure JS, ported from cryptonite",
   "type": "module",
@@ -35,5 +35,8 @@
   "exports": {
     ".": "./index.js",
     "./package.json": "./package.json"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }

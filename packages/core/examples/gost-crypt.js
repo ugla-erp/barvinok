@@ -1,5 +1,5 @@
 import * as jk from "../lib/index.js";
-import gost89 from "barvinok-gost89";
+import gost89 from "@ugla/barvinok-gost89";
 
 /*
    Data encryption with DSTU 4145 and GOST block cipher.

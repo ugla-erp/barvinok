@@ -1,4 +1,4 @@
-import asn1 from "barvinok-asn1";
+import asn1 from "@ugla/barvinok-asn1";
 
 var CRLReason = asn1.define("CRLReason", function () {
   this.enum({

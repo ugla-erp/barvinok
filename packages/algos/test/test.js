@@ -1,7 +1,7 @@
-import gost89 from "barvinok-gost89";
+import gost89 from "@ugla/barvinok-gost89";
 import { KupynaMac, hashes, storeload, storesave } from "../index.js";
-import { computeKmac } from "barvinok-kupyna";
-import dstu7624 from "barvinok-kalyna";
+import { computeKmac } from "@ugla/barvinok-kupyna";
+import dstu7624 from "@ugla/barvinok-kalyna";
 
 function hex(s) {
   return Buffer.from(s, "hex");

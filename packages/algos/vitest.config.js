@@ -4,6 +4,6 @@ export default defineConfig({
   test: {
     name: "algos",
     globals: true,
-    include: ["test/test.js"],
+    include: ["test/test.js", "test/*.test.js"],
   },
 });

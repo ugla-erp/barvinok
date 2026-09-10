@@ -1,4 +1,4 @@
-import asn1 from "barvinok-asn1";
+import asn1 from "@ugla/barvinok-asn1";
 import { Curve } from "../curve.js";
 
 import * as rfc3280 from "../spec/rfc3280.js";

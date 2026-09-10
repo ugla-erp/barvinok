@@ -1,5 +1,5 @@
 {
-  "name": "barvinok-asn1",
+  "name": "@ugla/barvinok-asn1",
   "version": "0.1.0",
   "description": "asn1.js 5.4.1 with the CHOICE-encoding parent fix barvinok requires (a three-line delta; see README)",
   "main": "lib/asn1.js",
@@ -31,5 +31,8 @@
   ],
   "engines": {
     "node": ">=22"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }

@@ -1,5 +1,5 @@
 import * as jk from "../lib/index.js";
-import gost89 from "barvinok-gost89";
+import gost89 from "@ugla/barvinok-gost89";
 
 // keys used
 const reciever_priv = jk.pkey(

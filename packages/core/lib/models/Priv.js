@@ -1,6 +1,6 @@
 /*jslint plusplus: true */
 import { Curve, std_curve as stdCurve } from "../curve.js";
-import asn1 from "barvinok-asn1";
+import asn1 from "@ugla/barvinok-asn1";
 import * as util from "../util.js";
 import random from "../rand.js";
 import * as pem from "../util/pem.js";

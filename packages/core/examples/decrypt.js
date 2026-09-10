@@ -1,6 +1,6 @@
 import fs from "node:fs";
 import * as jk from "../lib/index.js";
-import gost89 from "barvinok-gost89";
+import gost89 from "@ugla/barvinok-gost89";
 
 function decrypt_buffer(u8, priv, cert) {
   let msg_wrap, msg, data;

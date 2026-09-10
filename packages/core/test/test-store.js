@@ -1,6 +1,6 @@
 import { describe, it } from "vitest";
 import assert from "assert";
-import { algos } from "barvinok-gost89/lib/compat.js";
+import { algos } from "@ugla/barvinok-gost89/lib/compat.js";
 
 import * as jk from "../lib/index.js";
 import * as pbes2 from "../lib/spec/pbes.js";

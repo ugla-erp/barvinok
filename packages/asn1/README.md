@@ -1,11 +1,11 @@
-# barvinok-asn1
+# @ugla/barvinok-asn1
 
 **[asn1.js](https://github.com/indutny/asn1.js) 5.4.1 by Fedor Indutny, with a three-line fix.** MIT,
 as upstream. Everything here is Fedor Indutny's work except the patch described below.
 
 ## Why this package exists
 
-`barvinok` (formerly jkurwa) needs one behaviour upstream asn1.js does not have, and depended on it by
+`@ugla/barvinok` (formerly jkurwa) needs one behaviour upstream asn1.js does not have, and depended on it by
 pointing at a personal GitHub fork:
 
 ```json

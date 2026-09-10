@@ -45,15 +45,15 @@ Fixes we make to code that came from upstream, we will offer back.
 
 ## Packages
 
-| package             | from            | what it is                       |
-| ------------------- | --------------- | -------------------------------- |
-| `barvinok`          | jkurwa          | curves, ASN.1, containers, CAdES |
-| `barvinok-algos`    | dstucrypt-algos | algorithm wiring                 |
-| `barvinok-gost89`   | gost89          | GOST 28147-89 / 34.311-95        |
-| `barvinok-kupyna`   | dstu7564        | ДСТУ 7564:2014                   |
-| `barvinok-kalyna`   | dstu7624        | ДСТУ 7624:2014                   |
-| `barvinok-keystore` | jksreader       | Java KeyStore                    |
-| `barvinok-asn1`     | asn1.js         | DER, with a three-line fix       |
+| package                   | from            | what it is                       |
+| ------------------------- | --------------- | -------------------------------- |
+| `@ugla/barvinok`          | jkurwa          | curves, ASN.1, containers, CAdES |
+| `@ugla/barvinok-algos`    | dstucrypt-algos | algorithm wiring                 |
+| `@ugla/barvinok-gost89`   | gost89          | GOST 28147-89 / 34.311-95        |
+| `@ugla/barvinok-kupyna`   | dstu7564        | ДСТУ 7564:2014                   |
+| `@ugla/barvinok-kalyna`   | dstu7624        | ДСТУ 7624:2014                   |
+| `@ugla/barvinok-keystore` | jksreader       | Java KeyStore                    |
+| `@ugla/barvinok-asn1`     | asn1.js         | DER, with a three-line fix       |
 
 They live in one repository because they change together: teaching the stack a new hash regime touches
 the primitive, the wiring and the container layer as a single logical change.
@@ -63,7 +63,7 @@ languages. Ports that do not run identical vectors drift, and drift in a signatu
 
 Every package is ESM and publishes its source — there is no bundling step and no CommonJS build. Node
 22 is the floor, and `require()` of an ESM module works there, so a CommonJS caller is not shut out;
-`barvinok-asn1` is the one exception and stays CommonJS, because it is a byte-identical vendor drop.
+`@ugla/barvinok-asn1` is the one exception and stays CommonJS, because it is a byte-identical vendor drop.
 
 ## Scope: Ukraine now, the EU later
 
@@ -89,13 +89,6 @@ qualified signature from any other jurisdiction.
   the List of Trusted Lists: a per-member-state XML tree, signed per ETSI TS 119 612, that has to be
   fetched and validated before any certificate can be judged. This is the largest piece of the work
   and the least like anything in the tree today.
-
-The reason to state this before writing any of it: **it constrains present design.** The container
-layer must not hardcode the Ukrainian algorithm set, and right now it does —
-`Message.constructSigned` writes `"Gost34311"` as the digest algorithm regardless of what was
-actually used. That is already a defect for ДСТУ 7564, and it is exactly the assumption that would
-block SHA-256 later. Fixing it once serves both, so it should be fixed as a Ukrainian bug rather than
-deferred to an EU milestone.
 
 ## License
 

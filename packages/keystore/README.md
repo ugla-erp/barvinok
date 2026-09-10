@@ -1,4 +1,4 @@
-# barvinok-keystore
+# @ugla/barvinok-keystore
 
 Reads a Java KeyStore (JKS) — the container format several Ukrainian issuers hand out alongside the
 more common `Key-6.dat`.
@@ -7,7 +7,7 @@ Forked from [jksreader](https://github.com/dstucrypt/jksreader) by Ilya Petrov a
 the repository [NOTICE](../../NOTICE).
 
 ```js
-const { parse, decode } = require("barvinok-keystore");
+import { parse, decode } from "@ugla/barvinok-keystore";
 
 const store = parse(bytes); // null when `bytes` is not a JKS — check before using
 ```

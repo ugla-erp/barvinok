@@ -1,4 +1,4 @@
-import asn1 from "barvinok-asn1";
+import asn1 from "@ugla/barvinok-asn1";
 
 function encodeUtf8Str(input, encoder) {
   const UTF8STR = asn1.define("UTF8STR", function UTF8STR() {

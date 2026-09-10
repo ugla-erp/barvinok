@@ -24,14 +24,23 @@ function unpack(resp) {
     return null;
   }
 
-  if (!rmsg.info) {
+  // A reply shorter than its own status word is not a refusal to decode, it is a RangeError out of
+  // readInt32LE — and callers here branch on null, they do not catch.
+  if (!rmsg.info || rmsg.info.length < 8) {
     return null;
   }
   var result = rmsg.info.readInt32LE(4);
   if (result !== 1) {
     return null;
   }
-  rmsg = new Message(rmsg.info.slice(8));
+  try {
+    rmsg = new Message(rmsg.info.slice(8));
+  } catch (e) {
+    return null;
+  }
+  if (!Array.isArray(rmsg.info && rmsg.info.certificate)) {
+    return null;
+  }
   return rmsg.info.certificate.map(function (certData) {
     return new Certificate(certData);
   });
@@ -60,4 +69,7 @@ function lookup(keyids, url, query) {
     });
   });
 }
-export { lookup };
+// `makePayload` and `unpack` are exported because they are the halves worth reusing: the transport in
+// `lookup` is Node-shaped, and a browser cannot reach these endpoints at all (plain http, no CORS), so
+// a browser caller builds the request here and relays the bytes through its own backend.
+export { lookup, makePayload, unpack };

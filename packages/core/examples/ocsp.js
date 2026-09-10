@@ -3,7 +3,7 @@ import * as rfc2560 from "../lib/spec/rfc2560-ocsp.js";
 import Certificate from "../lib/models/Certificate.js";
 import http from "node:http";
 import url from "node:url";
-import gost89 from "barvinok-gost89";
+import gost89 from "@ugla/barvinok-gost89";
 
 function loadCert(path) {
   var buf = fs.readFileSync(path);

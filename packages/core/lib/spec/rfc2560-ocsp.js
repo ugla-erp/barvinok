@@ -1,4 +1,4 @@
-import asn1 from "barvinok-asn1";
+import asn1 from "@ugla/barvinok-asn1";
 import * as rfc3280 from "./rfc3280.js";
 import * as rfc4210 from "./rfc4210-cmp.js";
 

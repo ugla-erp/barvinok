@@ -1,7 +1,7 @@
 // Store load/save dispatcher: format + kdf + enc.
 // IIT format delegates to gost89; PBES2 dispatches on params.kdf / params.enc.
-import gost89 from "barvinok-gost89";
-import dstu7624 from "barvinok-kalyna";
+import gost89 from "@ugla/barvinok-gost89";
+import dstu7624 from "@ugla/barvinok-kalyna";
 import { KupynaMac } from "./kmac.js";
 
 function kdfFor(params) {
@@ -26,7 +26,10 @@ function encryptFor(params) {
 }
 
 function storeload(params, password) {
-  if (params.format === "IIT") {
+  // GOST-flavoured containers name no kdf/enc: spec/pbes.js accepts only Gost34311-hmac +
+  // Gost28147-cfb. gost89 decodes both formats itself and honours the substitution table the
+  // container may declare, which the dispatch below cannot pass through.
+  if (params.format === "IIT" || (!params.kdf && !params.enc)) {
     return gost89.compat.decode_data(params, password);
   }
   const kdf = kdfFor(params);

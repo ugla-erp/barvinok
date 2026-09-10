@@ -1,5 +1,5 @@
 {
-  "name": "barvinok-gost89",
+  "name": "@ugla/barvinok-gost89",
   "version": "0.1.0",
   "description": "Gost89 in JS",
   "type": "module",
@@ -38,5 +38,8 @@
     "./compat": "./lib/compat.js",
     "./lib/*": "./lib/*",
     "./package.json": "./package.json"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }

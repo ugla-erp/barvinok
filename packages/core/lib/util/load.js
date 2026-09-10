@@ -1,5 +1,5 @@
 import fs from "fs";
-import jksreader from "barvinok-keystore";
+import jksreader from "@ugla/barvinok-keystore";
 
 import complain from "./complain.js";
 import Priv from "../models/Priv.js";

@@ -1,5 +1,5 @@
 import { describe, it } from "vitest";
-import gost89 from "barvinok-gost89";
+import gost89 from "@ugla/barvinok-gost89";
 import assert from "assert";
 import * as strutil from "../lib/util/str.js";
 import { loadAsset, loadCert, assertEqualSaved } from "./utils.js";
