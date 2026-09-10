@@ -1,6 +1,6 @@
 {
   "name": "@ugla/barvinok-keystore",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "JKS format decoder",
   "type": "module",
   "main": "index.js",

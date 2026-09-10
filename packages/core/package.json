@@ -1,6 +1,6 @@
 {
   "name": "@ugla/barvinok",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Ukrainian national EC cryptography (DSTU-4145) implementaion",
   "type": "module",
   "main": "lib/index.js",
@@ -28,13 +28,13 @@
   },
   "homepage": "https://github.com/ugla-erp/barvinok/tree/main/packages/core#readme",
   "devDependencies": {
-    "@ugla/barvinok-gost89": "0.1.0"
+    "@ugla/barvinok-gost89": "0.1.1"
   },
   "dependencies": {
-    "@ugla/barvinok-asn1": "0.1.0",
+    "@ugla/barvinok-asn1": "0.1.1",
     "bn.js": "^5.2.5",
     "buffer": "^5.7.1",
-    "@ugla/barvinok-keystore": "0.1.0",
+    "@ugla/barvinok-keystore": "0.1.1",
     "js-lzma": "^0.1.0"
   },
   "exports": {

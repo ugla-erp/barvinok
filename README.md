@@ -5,8 +5,8 @@ GOST 34.311 hashing, ДСТУ 7624 (Калина) encryption, and the CMS/CAdES 
 
 Named for the periwinkle, keeping company with Купина and Калина.
 
-> **Status: early.** The tree has just been assembled from its upstreams and is being reorganised.
-> Nothing here is published to npm yet, and the package names below are the intended ones.
+> **Status: early.** Published to npm under `@ugla`, at 0.1.x. The tree was assembled from its
+> upstreams recently and the API is still moving — treat minor versions as breaking until 1.0.
 
 ## Standing on other people's work
 
