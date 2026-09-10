@@ -3,13 +3,12 @@
   "version": "0.1.0",
   "description": "Ukrainian national EC cryptography (DSTU-4145) implementaion",
   "type": "module",
-  "main": "dist/index.cjs",
+  "main": "lib/index.js",
   "browser": {
     "./lib/rand.js": "./lib/rand.browser.js"
   },
   "scripts": {
-    "test": "vitest run",
-    "build": "tsdown lib/index.js -f cjs -f esm --clean --platform node --target es2015 --deps.never-bundle barvinok-asn1 --deps.never-bundle js-lzma --deps.never-bundle barvinok-keystore --deps.never-bundle barvinok-gost89 --deps.never-bundle bn.js --deps.never-bundle buffer"
+    "test": "vitest run"
   },
   "repository": {
     "type": "git",
@@ -29,8 +28,7 @@
   },
   "homepage": "https://github.com/ugla-erp/barvinok/tree/main/packages/core#readme",
   "devDependencies": {
-    "barvinok-gost89": "0.1.0",
-    "tsdown": "^0.22.7"
+    "barvinok-gost89": "0.1.0"
   },
   "dependencies": {
     "barvinok-asn1": "0.1.0",
@@ -39,19 +37,14 @@
     "barvinok-keystore": "0.1.0",
     "js-lzma": "^0.1.0"
   },
-  "module": "dist/index.mjs",
   "exports": {
-    ".": {
-      "require": "./dist/index.cjs",
-      "import": "./dist/index.mjs",
-      "default": "./dist/index.cjs"
-    }
+    ".": "./lib/index.js",
+    "./package.json": "./package.json"
   },
   "engines": {
     "node": ">=22"
   },
   "files": [
-    "dist/",
     "lib/",
     "LICENSE",
     "README.md"

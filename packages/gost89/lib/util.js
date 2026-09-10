@@ -1,7 +1,5 @@
-"use strict";
-
-var Buffer = require("buffer").Buffer;
-var Hash = require("./hash.js");
+import { Buffer } from "buffer";
+import Hash from "./hash.js";
 
 var dumb_kdf = function (input, n_passes) {
   var ctx = Hash.init();
@@ -84,7 +82,4 @@ var pbkdf = function (input, salt, iters) {
   return Buffer.from(key);
 };
 
-module.exports = {
-  dumb_kdf: dumb_kdf,
-  pbkdf: pbkdf,
-};
+export { dumb_kdf, pbkdf };

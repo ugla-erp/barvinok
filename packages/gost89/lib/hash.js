@@ -1,7 +1,5 @@
-"use strict";
-
-var Buffer = require("buffer").Buffer;
-var gost89 = require("./gost89.js");
+import { Buffer } from "buffer";
+import gost89 from "./gost89.js";
 
 var Hash = function () {
   this.gost = gost89.init();
@@ -257,4 +255,4 @@ Hash.gosthash = function (data, ret) {
   }
   return Buffer.from(ctx.finish(ret));
 };
-module.exports = Hash;
+export default Hash;

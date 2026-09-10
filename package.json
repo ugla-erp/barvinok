@@ -1,6 +1,7 @@
 {
   "name": "barvinok-monorepo",
   "private": true,
+  "type": "module",
   "description": "Ukrainian national cryptography for JavaScript — ДСТУ 4145 / 7564 / 7624 and CMS/CAdES",
   "license": "Apache-2.0",
   "repository": {
@@ -25,8 +26,7 @@
     "check:eslint": "eslint .",
     "check:format": "prettier --check .",
     "check": "npm run check:oxlint && npm run check:eslint && npm run check:format",
-    "format": "prettier --write .",
-    "build": "npm run build --workspaces --if-present"
+    "format": "prettier --write ."
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",

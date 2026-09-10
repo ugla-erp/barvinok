@@ -24,4 +24,4 @@ function uint64_to_uint8(in64, in64_len, out8, out8_len) {
   }
 }
 
-module.exports = { uint8_to_uint64, uint64_to_uint8 };
+export { uint8_to_uint64, uint64_to_uint8 };

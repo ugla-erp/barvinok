@@ -1,7 +1,7 @@
-var assert = require("assert"),
-  Gost = require("../lib/gost89.js"),
-  dstu = require("../lib/dstu.js"),
-  compat = require("../lib/compat.js");
+import assert from "node:assert";
+import Gost from "../lib/gost89.js";
+import * as dstu from "../lib/dstu.js";
+import * as compat from "../lib/compat.js";
 
 describe("compat", function () {
   describe("decode_data() / storeload", { timeout: 20000 }, function () {

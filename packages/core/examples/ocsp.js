@@ -1,9 +1,9 @@
-var fs = require("fs");
-var rfc2560 = require("../lib/spec/rfc2560-ocsp");
-var Certificate = require("../lib/models/Certificate");
-var http = require("http");
-var url = require("url");
-var gost89 = require("barvinok-gost89");
+import fs from "node:fs";
+import * as rfc2560 from "../lib/spec/rfc2560-ocsp.js";
+import Certificate from "../lib/models/Certificate.js";
+import http from "node:http";
+import url from "node:url";
+import gost89 from "barvinok-gost89";
 
 function loadCert(path) {
   var buf = fs.readFileSync(path);

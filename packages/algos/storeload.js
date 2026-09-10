@@ -1,10 +1,8 @@
 // Store load/save dispatcher: format + kdf + enc.
 // IIT format delegates to gost89; PBES2 dispatches on params.kdf / params.enc.
-"use strict";
-
-const gost89 = require("barvinok-gost89");
-const dstu7624 = require("barvinok-kalyna");
-const { KupynaMac } = require("./kmac");
+import gost89 from "barvinok-gost89";
+import dstu7624 from "barvinok-kalyna";
+import { KupynaMac } from "./kmac.js";
 
 function kdfFor(params) {
   return {
@@ -50,4 +48,4 @@ function storesave(raw, params, password) {
   return Object.assign({}, params, { body });
 }
 
-module.exports = { storeload, storesave, kdfFor, decryptFor, encryptFor };
+export { storeload, storesave, kdfFor, decryptFor, encryptFor };

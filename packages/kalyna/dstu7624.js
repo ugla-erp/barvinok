@@ -1,8 +1,6 @@
 // Kalyna (DSTU 7624:2014) block cipher, ported from cryptonite src/cryptonite/c/dstu7624.c.
 // Currently implements Kalyna-256 (block 32 bytes, key 32 bytes) — the Dstu7624cbc-256 case.
-"use strict";
-
-const { sbox, sboxRev, mds, mdsRev } = require("./constants");
+import { sbox, sboxRev, mds, mdsRev } from "./constants.js";
 
 const MASK64 = 0xffffffffffffffffn;
 const REDUCTION_POLYNOMIAL = 0x11d;
@@ -336,7 +334,9 @@ function cbcDecrypt(key, iv, data) {
   return out;
 }
 
-module.exports = {
+export { keySchedule, encryptBlock, decryptBlock, cbcEncrypt, cbcDecrypt, reverseRkeys };
+
+export default {
   keySchedule,
   encryptBlock,
   decryptBlock,

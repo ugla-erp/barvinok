@@ -81,4 +81,4 @@ function parse(jks) {
   };
 }
 
-module.exports = parse;
+export default parse;

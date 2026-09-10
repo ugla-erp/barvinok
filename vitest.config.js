@@ -6,6 +6,18 @@ import { defineConfig } from "vitest/config";
 // arrived with four different harnesses, two of which could not fail.
 export default defineConfig({
   test: {
-    projects: ["packages/*"],
+    projects: [
+      "packages/*",
+      {
+        // Cross-package invariants live at the root because they belong to no single package: the
+        // module-resolution guard checks the whole tree at once, and would be arbitrary to file
+        // under any one of them.
+        test: {
+          name: "workspace",
+          globals: true,
+          include: ["test/*.test.js"],
+        },
+      },
+    ],
   },
 });

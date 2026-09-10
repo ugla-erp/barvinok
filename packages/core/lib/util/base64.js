@@ -1,6 +1,4 @@
 /*jslint plusplus: true, bitwise: true */
-"use strict";
-
 import { Buffer } from "buffer";
 
 var B64 = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=",

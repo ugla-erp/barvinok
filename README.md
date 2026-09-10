@@ -53,12 +53,49 @@ Fixes we make to code that came from upstream, we will offer back.
 | `barvinok-kupyna`   | dstu7564        | ДСТУ 7564:2014                   |
 | `barvinok-kalyna`   | dstu7624        | ДСТУ 7624:2014                   |
 | `barvinok-keystore` | jksreader       | Java KeyStore                    |
+| `barvinok-asn1`     | asn1.js         | DER, with a three-line fix       |
 
 They live in one repository because they change together: teaching the stack a new hash regime touches
 the primitive, the wiring and the container layer as a single logical change.
 
 `vectors/` holds the known-answer test data shared by every implementation, including ports to other
 languages. Ports that do not run identical vectors drift, and drift in a signature library is expensive.
+
+Every package is ESM and publishes its source — there is no bundling step and no CommonJS build. Node
+22 is the floor, and `require()` of an ESM module works there, so a CommonJS caller is not shut out;
+`barvinok-asn1` is the one exception and stays CommonJS, because it is a byte-identical vendor drop.
+
+## Scope: Ukraine now, the EU later
+
+**Today this library does Ukrainian signatures only.** ДСТУ 4145 over binary fields, ДСТУ 7564 and
+GOST 34.311 hashing, ДСТУ 7624 and GOST 28147 encryption, the Ukrainian key containers (`Key-6.dat`,
+JKS, PFX) and the Ukrainian certificate and trust-list profiles. Nothing here reads or produces a
+qualified signature from any other jurisdiction.
+
+**Supporting EU (eIDAS) qualified signatures is a stated goal, and it is not built.** Do not read
+"CAdES" below as "works in the EU". They differ in four places, and only the first is shared ground:
+
+- **Container format — mostly shared.** CAdES is CAdES: ETSI EN 319 122 profiles the same RFC 5652
+  `SignedData` this library already builds, with the same signed attributes. EU practice also expects
+  XAdES (XML), PAdES (PDF) and ASiC packaging, none of which exist here.
+- **Algorithms — entirely different, and much easier.** The EU signs with RSA-PSS or ECDSA over NIST
+  and Brainpool curves, hashing with SHA-2 or SHA-3. This library implements none of them, and will
+  not need to: unlike the DSTU set, every one of those primitives is already in WebCrypto and in
+  `node:crypto`. The work is wiring, not mathematics.
+- **Certificate profile — different.** Qualified certificates under ETSI EN 319 412 carry QCStatements
+  that the Ukrainian profile does not, and that a verifier has to read to decide what a signature
+  legally is.
+- **Trust anchors — different mechanism.** Ukraine has one trust list published by the ЦЗО. The EU has
+  the List of Trusted Lists: a per-member-state XML tree, signed per ETSI TS 119 612, that has to be
+  fetched and validated before any certificate can be judged. This is the largest piece of the work
+  and the least like anything in the tree today.
+
+The reason to state this before writing any of it: **it constrains present design.** The container
+layer must not hardcode the Ukrainian algorithm set, and right now it does —
+`Message.constructSigned` writes `"Gost34311"` as the digest algorithm regardless of what was
+actually used. That is already a defect for ДСТУ 7564, and it is exactly the assumption that would
+block SHA-256 later. Fixing it once serves both, so it should be fixed as a Ukrainian bug rather than
+deferred to an EU milestone.
 
 ## License
 

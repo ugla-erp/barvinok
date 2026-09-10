@@ -5,8 +5,10 @@
  * Redistribution and modifications are permitted subject to BSD license.
  */
 
-const { uint8_to_uint64, uint64_to_uint8 } = require("./bufferUtil.js");
-const subrowcol = require("./subrowcol.js").map(uint8_to_uint64);
+import { uint8_to_uint64, uint64_to_uint8 } from "./bufferUtil.js";
+import subrowcolTable from "./subrowcol.js";
+
+const subrowcol = subrowcolTable.map(uint8_to_uint64);
 
 const ROWS = 8;
 const NB_512 = 8; /* Number of 8-byte words _in state for <=256-bit hash code. */
@@ -703,7 +705,17 @@ function dstu7564_kmac(key, macLen) {
   return { compute };
 }
 
-module.exports = {
+export {
+  computeHash,
+  computeKmac,
+  dstu7564_kmac,
+  dstu7564_alloc,
+  dstu7564_init,
+  dstu7564_update,
+  dstu7564_final,
+};
+
+export default {
   computeHash,
   computeKmac,
   dstu7564_kmac,

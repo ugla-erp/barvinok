@@ -1,7 +1,7 @@
-var jk = require("../lib/index");
+import * as jk from "../lib/index.js";
 
-var gost89 = require("barvinok-gost89");
-var fs = require("fs");
+import gost89 from "barvinok-gost89";
+import fs from "node:fs";
 
 function main() {
   var contents = fs.readFileSync("Key-6.dat");

@@ -1,12 +1,12 @@
-var Message = require("../lib/models/Message");
-var Certificate = require("../lib/models/Certificate");
+import Message from "../lib/models/Message.js";
+import Certificate from "../lib/models/Certificate.js";
 
-var Box = require("../lib/app/ctx");
-var gost89 = require("barvinok-gost89");
-var fs = require("fs");
+import Box from "../lib/app/ctx.js";
+import gost89 from "barvinok-gost89";
+import fs from "node:fs";
 
-var http = require("http");
-var url = require("url");
+import http from "node:http";
+import url from "node:url";
 
 function post(queryUrL, data, cb) {
   var parsed = url.parse(queryUrL);
@@ -91,7 +91,7 @@ function main() {
   var box = new Box({
     keys: [
       {
-        privPath: `${__dirname}/../test/data/Key6929.cer`,
+        privPath: `${import.meta.dirname}/../test/data/Key6929.cer`,
         //password: '123',
         //privPath: './FOP_key.dat',
       },

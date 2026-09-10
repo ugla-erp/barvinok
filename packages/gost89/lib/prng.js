@@ -1,7 +1,5 @@
-"use strict";
-
-var Buffer = require("buffer").Buffer;
-var Gost = require("./gost89");
+import { Buffer } from "buffer";
+import Gost from "./gost89.js";
 
 var PRNG = function (key) {
   var ctx = Gost.init();
@@ -79,4 +77,4 @@ PRNG.seed = function (seed) {
   return new PRNG(seed);
 };
 
-module.exports = PRNG;
+export default PRNG;

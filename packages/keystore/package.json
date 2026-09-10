@@ -2,6 +2,7 @@
   "name": "barvinok-keystore",
   "version": "0.1.0",
   "description": "JKS format decoder",
+  "type": "module",
   "main": "index.js",
   "scripts": {
     "test": "vitest run"

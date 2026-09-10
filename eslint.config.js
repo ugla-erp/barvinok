@@ -21,6 +21,8 @@ export default defineConfig([
     files: [`**/*.{js,mjs,cjs}`],
   },
 
+  // `packages/asn1` is the only CommonJS left in the workspace, and it is ignored below as a vendor
+  // drop — so there is no `sourceType: commonjs` override anywhere in this file.
   globalIgnores([
     `**/dist/**`,
     `**/coverage/**`,
@@ -44,16 +46,6 @@ export default defineConfig([
   js.configs.recommended,
   ...pluginOxlint.configs[`flat/recommended`],
   prettier,
-
-  {
-    // The packages are still CommonJS apart from `core` — that migration is deliberately a separate
-    // change (see the ESM step in the roadmap), so until then their `require`/`module.exports` must not
-    // read as errors.
-    files: [`packages/{algos,gost89,kupyna,kalyna,keystore}/**/*.js`],
-    languageOptions: {
-      sourceType: `commonjs`,
-    },
-  },
 
   {
     /**
@@ -97,15 +89,6 @@ export default defineConfig([
   },
 
   {
-    // Config files are ESM even inside the CommonJS packages — the CJS override above matches every
-    // `.js` under those directories, and these are the exception to it.
-    files: [`**/*.config.{js,mjs}`],
-    languageOptions: {
-      sourceType: `module`,
-    },
-  },
-
-  {
     // Test files. The vitest configs set `globals: true` so the inherited CommonJS suites need no
     // import added — which means the globals have to be declared HERE too, or every `it` and `expect`
     // in them reads as undefined.
@@ -118,15 +101,6 @@ export default defineConfig([
     },
     rules: {
       "no-unused-expressions": `off`,
-    },
-  },
-
-  {
-    // `core` is `type: module`, but its examples and a few lib files are still CommonJS — that split is
-    // what the ESM migration resolves. Until then they are parsed as what they are.
-    files: [`packages/core/examples/**/*.js`],
-    languageOptions: {
-      sourceType: `commonjs`,
     },
   },
 ]);

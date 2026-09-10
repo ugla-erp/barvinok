@@ -1,4 +1,4 @@
-const { computeHash, computeKmac, dstu7564_kmac } = require("./dstu7564.js");
+import { computeHash, computeKmac, dstu7564_kmac } from "./dstu7564.js";
 
 function main2() {
   const buffer = Buffer.from(

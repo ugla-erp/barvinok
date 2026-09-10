@@ -1,7 +1,5 @@
-"use strict";
-
-var Buffer = require("buffer").Buffer;
-var gost89 = require("./gost89.js");
+import { Buffer } from "buffer";
+import gost89 from "./gost89.js";
 
 var WRAP_IV = Buffer.from([0x4a, 0xdd, 0xa2, 0x2c, 0x79, 0xe8, 0x21, 0x05]);
 
@@ -89,7 +87,4 @@ var key_unwrap = function (wcek, kek) {
   return Buffer.from(cekicv.slice(0, 32));
 };
 
-module.exports = {
-  unwrap: key_unwrap,
-  wrap: key_wrap,
-};
+export { key_unwrap as unwrap, key_wrap as wrap };

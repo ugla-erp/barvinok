@@ -1,5 +1,5 @@
-var assert = require("assert"),
-  gost89 = require("..");
+import assert from "node:assert";
+import gost89 from "../index.js";
 
 describe("utils", function () {
   describe("dumb_kdf()", function () {

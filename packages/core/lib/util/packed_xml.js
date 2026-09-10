@@ -1,5 +1,3 @@
-"use strict";
-
 import lzmaDecoder from "js-lzma";
 import { Buffer } from "buffer";
 

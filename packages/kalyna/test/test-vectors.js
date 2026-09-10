@@ -1,11 +1,11 @@
-const {
+import {
   encryptBlock,
   decryptBlock,
   cbcEncrypt,
   cbcDecrypt,
   keySchedule,
   reverseRkeys,
-} = require("../dstu7624");
+} from "../dstu7624.js";
 
 function hex(s) {
   return Buffer.from(s, "hex");

@@ -1,4 +1,4 @@
-var sha1 = require("js-sha1");
+import sha1 from "js-sha1";
 
 function encode_utf16(str) {
   var buf = new Buffer(str.length * 2);
@@ -47,4 +47,4 @@ function decode(buf, password) {
   return match === 0 ? open : null;
 }
 
-module.exports = decode;
+export default decode;

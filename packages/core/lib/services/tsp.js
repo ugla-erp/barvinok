@@ -1,6 +1,6 @@
-import rfc3161 from "../spec/rfc3161-tsp";
-import Certificate from "../models/Certificate";
-import * as dstszi2010 from "../spec/dstszi2010";
+import rfc3161 from "../spec/rfc3161-tsp.js";
+import Certificate from "../models/Certificate.js";
+import * as dstszi2010 from "../spec/dstszi2010.js";
 
 function getStampCb(cert, hashedMessage, query, cb, errorCb) {
   var tsp = rfc3161.TimeStampReq.encode(

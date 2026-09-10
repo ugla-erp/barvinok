@@ -1,2 +1,2 @@
-"use strict";
-module.exports = require("./dstu7624");
+export * from "./dstu7624.js";
+export { default } from "./dstu7624.js";

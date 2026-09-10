@@ -1,5 +1,5 @@
-const assert = require("assert");
-const { parse } = require("..");
+import assert from "node:assert";
+import { parse } from "../index.js";
 
 // The package arrived with `"test": "echo \"Error: no test specified\" && exit 1"` — nothing at all.
 //

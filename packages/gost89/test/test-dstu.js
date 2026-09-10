@@ -1,5 +1,5 @@
-var assert = require("assert"),
-  dstu = require("../lib/dstu.js");
+import assert from "node:assert";
+import * as dstu from "../lib/dstu.js";
 
 // Small deterministic LCG so the property test below is reproducible across
 // runs/machines instead of relying on Math.random().

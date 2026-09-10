@@ -1,22 +1,34 @@
-"use strict";
+import { init } from "./lib/gost89.js";
+import Hash from "./lib/hash.js";
+import PRNG from "./lib/prng.js";
+import { dumb_kdf, pbkdf } from "./lib/util.js";
+import { wrap, unwrap } from "./lib/keywrap.js";
+import * as compat from "./lib/compat.js";
 
-var Gost = require("./lib/gost89.js");
-var Dstu = require("./lib/dstu.js");
-var Hash = require("./lib/hash.js");
-var PRNG = require("./lib/prng.js");
+const gosthash = Hash.gosthash;
 
-var util = require("./lib/util.js");
-var keywrap = require("./lib/keywrap.js");
-var compat = require("./lib/compat.js");
+export {
+  init,
+  PRNG,
+  Hash,
+  gosthash,
+  dumb_kdf,
+  pbkdf,
+  wrap as wrap_key,
+  unwrap as unwrap_key,
+  compat,
+};
 
-module.exports = {
-  init: Gost.init,
-  PRNG: PRNG,
-  Hash: Hash,
-  gosthash: Hash.gosthash,
-  dumb_kdf: util.dumb_kdf,
-  pbkdf: util.pbkdf,
-  wrap_key: keywrap.wrap,
-  unwrap_key: keywrap.unwrap,
-  compat: compat,
+// The same object `require("gost89")` used to hand back, so `import gost89 from "barvinok-gost89"`
+// keeps working for callers that reach through it (`gost89.compat.algos()`).
+export default {
+  init,
+  PRNG,
+  Hash,
+  gosthash,
+  dumb_kdf,
+  pbkdf,
+  wrap_key: wrap,
+  unwrap_key: unwrap,
+  compat,
 };

@@ -1,12 +1,10 @@
 // dstucrypt-algos: combined algorithm object for jkurwa.
 // Depends on the crypto zoo (gost89 + dstu7564 + dstu7624) and exposes algos()
 // with a hashes map + kdf/cipher/storeload dispatchers.
-"use strict";
-
-const gost89 = require("barvinok-gost89");
-const dstu7564 = require("barvinok-kupyna");
-const { KupynaMac } = require("./kmac");
-const { storeload, storesave } = require("./storeload");
+import gost89 from "barvinok-gost89";
+import dstu7564 from "barvinok-kupyna";
+import { KupynaMac } from "./kmac.js";
+import { storeload, storesave } from "./storeload.js";
 
 const hashes = {
   Gost34311: (data) => gost89.gosthash(data),
@@ -30,4 +28,6 @@ function algos() {
   });
 }
 
-module.exports = { algos, hashes, KupynaMac, storeload, storesave };
+export { algos, hashes, KupynaMac, storeload, storesave };
+
+export default { algos, hashes, KupynaMac, storeload, storesave };

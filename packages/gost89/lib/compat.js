@@ -1,12 +1,10 @@
-"use strict";
+import { Buffer } from "buffer";
 
-var Buffer = require("buffer").Buffer;
-
-var keywrap = require("./keywrap.js"),
-  util = require("./util.js"),
-  Gost = require("./gost89.js"),
-  Hash = require("./hash.js"),
-  dstu = require("./dstu.js");
+import * as keywrap from "./keywrap.js";
+import * as util from "./util.js";
+import Gost from "./gost89.js";
+import Hash from "./hash.js";
+import * as dstu from "./dstu.js";
 
 var convert_password = function (parsed, pw) {
   if (parsed.format === "IIT") {
@@ -93,15 +91,22 @@ var gost_encrypt_cfb = function (cypher, key, iv) {
   return gost_crypt(0, cypher, key, iv);
 };
 
-module.exports.decode_data = decode_data;
-module.exports.convert_password = convert_password;
-module.exports.compute_hash = compute_hash;
-module.exports.gost_kdf = gost_kdf;
-module.exports.gost_unwrap = gost_unwrap;
-module.exports.gost_keywrap = gost_keywrap;
-module.exports.gost_decrypt_cfb = gost_decrypt_cfb;
-module.exports.gost_encrypt_cfb = gost_encrypt_cfb;
-module.exports.algos = function () {
+// `encode_data` is deliberately not exported by name: it never was, and it is reachable only as
+// `algos().storesave`. Its signature disagrees with the `storesave(raw, params, password)` that
+// barvinok-algos declares, which is a real defect and a separate change — widening the export
+// surface here would only spread it.
+export {
+  decode_data,
+  convert_password,
+  compute_hash,
+  gost_kdf,
+  gost_unwrap,
+  gost_keywrap,
+  gost_decrypt_cfb,
+  gost_encrypt_cfb,
+};
+
+export function algos() {
   return {
     kdf: gost_kdf,
     keywrap: gost_keywrap,
@@ -112,4 +117,4 @@ module.exports.algos = function () {
     storeload: decode_data,
     storesave: encode_data,
   };
-};
+}

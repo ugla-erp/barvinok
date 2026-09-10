@@ -1,7 +1,5 @@
-"use strict";
-
-var Buffer = require("buffer").Buffer;
-var Dstu = require("./dstu.js");
+import { Buffer } from "buffer";
+import * as Dstu from "./dstu.js";
 
 var Subst = function (data, mem) {
   this.k8 = mem.subarray(0, 16);
@@ -406,11 +404,18 @@ Gost.prototype.mac64 = function (buffer, block) {
   buffer[7] = n[1] >>> 24;
 };
 
-module.exports = Gost;
-module.exports.Subst = Subst;
-module.exports.init = function (sbox) {
+function init(sbox) {
   if (sbox === undefined) {
     sbox = Dstu.defaultSbox;
   }
   return new Gost(sbox);
-};
+}
+
+// Callers reach these through the constructor itself (`gost89.init()`, `Gost.Subst`), which is how
+// every call site in the tree is written. Attaching them keeps that shape working alongside the
+// named exports rather than forcing an import rewrite at each site.
+Gost.Subst = Subst;
+Gost.init = init;
+
+export { Subst, init };
+export default Gost;

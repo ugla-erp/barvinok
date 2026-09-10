@@ -1,7 +1,7 @@
-const gost89 = require("barvinok-gost89");
-const { KupynaMac, hashes, storeload, storesave } = require("../index");
-const { computeKmac } = require("barvinok-kupyna");
-const dstu7624 = require("barvinok-kalyna");
+import gost89 from "barvinok-gost89";
+import { KupynaMac, hashes, storeload, storesave } from "../index.js";
+import { computeKmac } from "barvinok-kupyna";
+import dstu7624 from "barvinok-kalyna";
 
 function hex(s) {
   return Buffer.from(s, "hex");
